@@ -24,6 +24,4 @@ export class EthersJS {
   }
 
   private static instances: InstancesObject = {}
-
-  private constructor() {}
 }

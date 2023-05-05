@@ -1,15 +1,10 @@
-import {
-  BaseProvider,
-  EtherscanProvider,
-  StaticJsonRpcProvider,
-} from '@ethersproject/providers'
-import { isEmpty } from '@utils'
+import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers'
 
-import { Network, NodeOptions, NodeType } from '@types'
+import { Network, NodeOptions } from '@types'
 import FallbackProvider from '@vendor/fallbackProvider'
 
 const getProvider = (node: NodeOptions, chainId: number) => {
-  const { type, url } = node
+  const { url } = node
 
   const connection = { url, throttleLimit: 3 }
 

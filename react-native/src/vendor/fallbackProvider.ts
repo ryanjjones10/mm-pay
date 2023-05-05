@@ -94,7 +94,7 @@ export class FallbackProvider extends BaseProvider {
         }
 
         const provider = providers.shift()
-        provider!
+        provider
           .perform(method, params)
           .then((result) => {
             return resolve(result)

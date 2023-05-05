@@ -39,7 +39,7 @@ export class AbiFunction {
     return encodedCall
   }
 
-  public decodeInput = (argString: string, chainId: number) => {
+  public decodeInput = (argString: string) => {
     // Remove method selector from data, if present
     argString = argString.replace(addHexPrefix(this.methodSelector), '')
     // Convert argdata to a hex buffer for ethereumjs-abi
@@ -52,12 +52,12 @@ export class AbiFunction {
       const currType = this.inputTypes[index]
       return {
         ...argObj,
-        [currName]: this.parsePostDecodedValue(currType, currArg, chainId),
+        [currName]: this.parsePostDecodedValue(currType, currArg),
       }
     }, {})
   }
 
-  public decodeOutput = (argString: string, chainId: number) => {
+  public decodeOutput = (argString: string) => {
     // Remove method selector from data, if present
     argString = argString.replace(addHexPrefix(this.methodSelector), '')
 
@@ -75,7 +75,7 @@ export class AbiFunction {
       const currType = this.outputTypes[index]
       return {
         ...argObj,
-        [currName]: this.parsePostDecodedValue(currType, currArg, chainId),
+        [currName]: this.parsePostDecodedValue(currType, currArg),
       }
     }, {})
   }
@@ -95,11 +95,7 @@ export class AbiFunction {
       .toString('hex')
   }
 
-  private parsePostDecodedValue = (
-    type: string,
-    value: any,
-    chainId: number,
-  ) => {
+  private parsePostDecodedValue = (type: string, value: any) => {
     const valueMapping: ITypeMapping = {
       address: (val: any) => toChecksumAddress(val.toString(16)),
       'address[]': (val: any) =>
