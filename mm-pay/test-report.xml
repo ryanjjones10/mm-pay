@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testExecutions version="1">
-  <file path="/Users/hecate/simple-wallet/mm-pay/mm-pay/src/utils/bigify.spec.ts">
-  </file>
-  <file path="/Users/hecate/simple-wallet/mm-pay/mm-pay/src/utils/makeTransaction.spec.ts">
-  </file>
-  <file path="/Users/hecate/simple-wallet/mm-pay/mm-pay/src/utils/units.spec.ts">
-  </file>
-</testExecutions>
