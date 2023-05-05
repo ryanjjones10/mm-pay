@@ -1,7 +1,7 @@
 import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers'
 
-import { Network, NodeOptions } from '@types'
-import FallbackProvider from '@vendor/fallbackProvider'
+import { Network, NodeOptions } from '@app/types'
+import FallbackProvider from '@app/vendor/fallbackProvider'
 
 const getProvider = (node: NodeOptions, chainId: number) => {
   const { url } = node

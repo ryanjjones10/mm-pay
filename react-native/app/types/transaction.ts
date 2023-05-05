@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import BN from 'bn.js'
 import { Brand } from 'utility-types'
 
-import { Address, Wei } from '@utils'
+import { Address, Wei } from '@app/utils'
 
 import { TAddress } from './address'
 import { Asset } from './asset'

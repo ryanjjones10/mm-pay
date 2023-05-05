@@ -15,7 +15,6 @@ export {
   gasPriceValidator,
   gasLimitValidator,
   isTransactionFeeHigh,
-  isChecksumAddress,
   isBurnAddress,
   isValidETHRecipientAddress,
 } from './validators'

@@ -2,9 +2,8 @@ import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { formatEther } from '@ethersproject/units'
 import BigNumber from 'bignumber.js'
-import { addHexPrefix } from 'ethereumjs-util'
 
-import { DEFAULT_ASSET_DECIMAL } from '@config'
+import { DEFAULT_ASSET_DECIMAL } from '@app/config'
 import {
   BigifySupported,
   Bigish,
@@ -13,10 +12,11 @@ import {
   ITxNonce,
   ITxObject,
   ITxValue,
-} from '@types'
+} from '@app/types'
 
 import { bigify } from './bigify'
 import { fromWei, gasPriceToBase, toTokenBase, toWei, Wei } from './units'
+import { addHexPrefix } from './addHexPrefix'
 
 export const makeTransaction = (t: ITxObject): TransactionRequest => {
   // Hardware wallets need `from` param excluded

@@ -1,5 +1,5 @@
-import { Network } from '@types'
-import { FallbackProvider } from '@vendor'
+import { Network } from '@app/types'
+import { FallbackProvider } from '@app/vendor'
 
 import { createFallbackNetworkProviders } from './helpers'
 

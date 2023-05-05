@@ -1,11 +1,13 @@
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import abi from 'ethereumjs-abi'
-import {
-  addHexPrefix,
-  stripHexPrefix,
-  toChecksumAddress,
-} from 'ethereumjs-util'
+import { Buffer } from 'buffer'
+import 'react-native-get-random-values'
+import '@ethersproject/shims'
+import { AbiCoder } from '@ethersproject/abi'
+import { keccak256 } from '@ethersproject/keccak256'
+import { toChecksumAddress } from '@ethereumjs/util/dist/account'
+
+import { addHexPrefix, stripHexPrefix } from '@app/utils'
 
 import {
   FuncParams,
@@ -15,6 +17,27 @@ import {
   ITypeMapping,
   Output,
 } from './types'
+
+const elementaryName = (name) => {
+  if (name.startsWith('int[')) {
+    return 'int256' + name.slice(3)
+  } else if (name === 'int') {
+    return 'int256'
+  } else if (name.startsWith('uint[')) {
+    return 'uint256' + name.slice(4)
+  } else if (name === 'uint') {
+    return 'uint256'
+  } else if (name.startsWith('fixed[')) {
+    return 'fixed128x128' + name.slice(5)
+  } else if (name === 'fixed') {
+    return 'fixed128x128'
+  } else if (name.startsWith('ufixed[')) {
+    return 'ufixed128x128' + name.slice(6)
+  } else if (name === 'ufixed') {
+    return 'ufixed128x128'
+  }
+  return name
+}
 
 export class AbiFunction {
   public constant: boolean
@@ -40,12 +63,13 @@ export class AbiFunction {
   }
 
   public decodeInput = (argString: string) => {
+    const abi = new AbiCoder()
     // Remove method selector from data, if present
     argString = argString.replace(addHexPrefix(this.methodSelector), '')
     // Convert argdata to a hex buffer for ethereumjs-abi
     const argBuffer = Buffer.from(argString, 'hex')
     // Decode!
-    const argArr = abi.rawDecode(this.inputTypes, argBuffer)
+    const argArr = abi.decode(this.inputTypes, argBuffer)
     //@todo: parse checksummed addresses
     return argArr.reduce((argObj, currArg, index) => {
       const currName = this.inputNames[index]
@@ -58,6 +82,8 @@ export class AbiFunction {
   }
 
   public decodeOutput = (argString: string) => {
+    const abi = new AbiCoder()
+
     // Remove method selector from data, if present
     argString = argString.replace(addHexPrefix(this.methodSelector), '')
 
@@ -67,7 +93,7 @@ export class AbiFunction {
     // Convert argdata to a hex buffer for ethereumjs-abi
     const argBuffer = Buffer.from(argString, 'hex')
     // Decode!
-    const argArr = abi.rawDecode(this.outputTypes, argBuffer)
+    const argArr = abi.decode(this.outputTypes, argBuffer)
 
     //@todo: parse checksummed addresses
     return argArr.reduce((argObj, currArg, index) => {
@@ -80,6 +106,11 @@ export class AbiFunction {
     }, {})
   }
 
+  private getMethodId = (name: string, types: string[]) => {
+    const sig = name + '(' + types.map(elementaryName).join(',') + ')'
+    return keccak256(Buffer.from(sig)).slice(0, 4)
+  }
+
   private init(outputMappings: FunctionOutputMappings = []) {
     //@todo: do this in O(n)
     this.inputTypes = this.inputs.map(({ type }) => type)
@@ -90,9 +121,7 @@ export class AbiFunction {
     )
     this.funcParams = this.makeFuncParams()
 
-    this.methodSelector = abi
-      .methodID(this.name, this.inputTypes)
-      .toString('hex')
+    this.methodSelector = this.getMethodId(this.name, this.inputTypes)
   }
 
   private parsePostDecodedValue = (type: string, value: any) => {
@@ -135,7 +164,8 @@ export class AbiFunction {
     }, {})
 
   private makeEncodedFuncCall = (args: string[]) => {
-    const encodedArgs = abi.rawEncode(this.inputTypes, args).toString('hex')
+    const abi = new AbiCoder()
+    const encodedArgs = abi.encode(this.inputTypes, args)
     return addHexPrefix(`${this.methodSelector}${encodedArgs}`)
   }
 

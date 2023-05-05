@@ -1,4 +1,4 @@
-import { Asset, TTicker } from '@types'
+import { Asset, TTicker } from '@app/types'
 
 export const LINEA_USDC: Asset = {
   address: '0xf56dc6695cF1f5c364eDEbC7Dc7077ac9B586068',

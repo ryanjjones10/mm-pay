@@ -11,9 +11,8 @@ import {
 } from '@ethersproject/providers'
 import { formatEther } from '@ethersproject/units'
 
-import { DEFAULT_ASSET_DECIMAL } from '@config'
-import { ERC20 } from '@services/EthService'
-import { erc20Abi } from '@services/EthService/contracts/erc20'
+import { DEFAULT_ASSET_DECIMAL } from '@app/config'
+import { ERC20, erc20Abi } from '@app/services/EthService/contracts/erc20'
 import {
   Asset,
   ISignedMessage,
@@ -22,16 +21,15 @@ import {
   Network,
   TAddress,
   TokenInformation,
-} from '@types'
-import { baseToConvertedUnit } from '@utils'
+} from '@app/types'
+import { baseToConvertedUnit } from '@app/utils'
+import { FallbackProvider } from '@app/vendor'
 
 import { EIP1271_ABI } from '../contracts'
 import { EthersJS } from './ethersJsProvider'
 import { createCustomNodeProvider } from './helpers'
-import { FallbackProvider } from '@vendor'
 
 export class ProviderHandler {
-  /* @todo: Needs handling for web3 providers. */
   public static fetchProvider(network: Network): FallbackProvider {
     return EthersJS.getEthersInstance(network)
   }

@@ -1,19 +1,19 @@
 import BigNumber from 'bignumber.js'
-import { toChecksumAddress } from 'ethereumjs-util'
 import {
   DEFAULT_ASSET_DECIMAL,
   GAS_LIMIT_LOWER_BOUND,
   GAS_LIMIT_UPPER_BOUND,
   GAS_PRICE_GWEI_LOWER_BOUND,
   GAS_PRICE_GWEI_UPPER_BOUND,
-} from '@config'
+} from '@app/config'
 import {
   bigNumGasPriceToViewableGwei,
   bigify,
   convertedToBaseUnit,
   gasStringsToMaxGasBN,
   gasStringsToMaxGasNumber,
-} from '@utils'
+} from '@app/utils'
+import { toChecksumAddress } from '@ethereumjs/util/dist/account'
 
 export const isValidPositiveOrZeroInteger = (
   value: BigNumber | number | string,

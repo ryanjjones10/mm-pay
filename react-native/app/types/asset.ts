@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Brand } from 'utility-types'
 
-import { TAddress, TUuid } from '@types'
+import { TAddress, TUuid } from '@app/types'
 
 export type TTicker = Brand<string, 'Ticker'>
 export type TFiatTicker = Brand<TTicker, 'FiatTicker'>

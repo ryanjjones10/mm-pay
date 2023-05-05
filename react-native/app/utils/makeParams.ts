@@ -1,4 +1,4 @@
-import { ExplorerConfig, TAddress } from '@types'
+import { ExplorerConfig, TAddress } from '@app/types'
 
 /**
  * Create config object for each network.

@@ -1,4 +1,4 @@
-import { Network, TAddress } from '@types'
+import { Network, TAddress } from '@app/types'
 
 import { ProviderHandler } from './network'
 

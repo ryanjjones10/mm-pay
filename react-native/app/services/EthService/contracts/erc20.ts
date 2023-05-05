@@ -1,4 +1,4 @@
-import { IERC20 } from '@types'
+import { IERC20 } from '@app/types'
 
 import { default as Contract } from './contract'
 

@@ -1,6 +1,6 @@
-import { bufferToHex, toBuffer } from 'ethereumjs-util'
+import { bufferToHex, toBuffer } from '@ethereumjs/util/dist/bytes'
 
-import { Address, TokenValue } from '@utils'
+import { Address, TokenValue } from '@app/utils'
 
 import { ERC20 } from './erc20'
 

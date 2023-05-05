@@ -2,8 +2,8 @@ import { BigNumber as BigNumberish } from '@ethersproject/bignumber'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 
-import { DEFAULT_ASSET_DECIMAL } from '@config'
-import { BigifySupported } from '@types'
+import { DEFAULT_ASSET_DECIMAL } from '@app/config'
+import { BigifySupported } from '@app/types'
 
 export const bigify = (v: BigifySupported): BigNumber => {
   BigNumber.config({

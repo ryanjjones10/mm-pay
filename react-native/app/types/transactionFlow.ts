@@ -2,7 +2,7 @@ import { ComponentType } from 'react'
 
 import { Brand } from 'utility-types'
 
-import { Asset, Network as INetwork, ITxReceipt, TAddress } from '@types'
+import { Asset, Network as INetwork, ITxReceipt, TAddress } from '@app/types'
 import { StoreAccount } from './account'
 
 export type ISignedTx = string

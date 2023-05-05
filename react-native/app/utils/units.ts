@@ -1,10 +1,11 @@
 import BigNumber from 'bignumber.js'
-import { addHexPrefix, toBuffer } from 'ethereumjs-util'
 
-import { DEFAULT_ASSET_DECIMAL } from '@config'
-import { BigifySupported, Bigish } from '@types'
+import { DEFAULT_ASSET_DECIMAL } from '@app/config'
+import { BigifySupported, Bigish } from '@app/types'
 
 import { bigify } from './bigify'
+import { toBuffer } from '@ethereumjs/util/dist/bytes'
+import { addHexPrefix } from './addHexPrefix'
 
 type UnitKey = keyof typeof Units
 type Wei = BigNumber
