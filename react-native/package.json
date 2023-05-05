@@ -9,8 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "tscheck": "tsc",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx,js}\""
+    "format": "prettier --write \"app/**/*.ts\"",
+    "lint": "eslint \"{app,apps,libs,test}/**/*.{ts,tsx,js}\""
   },
   "dependencies": {
     "@ethersproject/contracts": "^5.7.0",
