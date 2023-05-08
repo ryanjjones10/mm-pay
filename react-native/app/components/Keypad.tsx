@@ -17,28 +17,55 @@ const buttonStyle = StyleSheet.create({
   },
 })
 
-function Keypad() {
+function Keypad({ onChange }: { onChange: any }) {
+  const handleChange = (value) => {
+    onChange(value)
+  }
   return (
     <div>
       <div style={buttonStyle.row}>
-        <button style={buttonStyle.button}>0</button>
-        <button style={buttonStyle.button}>1</button>
-        <button style={buttonStyle.button}>2</button>
+        <button style={buttonStyle.button} onClick={() => handleChange(1)}>
+          1
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(2)}>
+          2
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(3)}>
+          3
+        </button>
       </div>
       <div style={buttonStyle.row}>
-        <button style={buttonStyle.button}>3</button>
-        <button style={buttonStyle.button}>4</button>
-        <button style={buttonStyle.button}>5</button>
+        <button style={buttonStyle.button} onClick={() => handleChange(4)}>
+          4
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(5)}>
+          5
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(6)}>
+          6
+        </button>
       </div>
       <div style={buttonStyle.row}>
-        <button style={buttonStyle.button}>6</button>
-        <button style={buttonStyle.button}>7</button>
-        <button style={buttonStyle.button}>9</button>
+        <button style={buttonStyle.button} onClick={() => handleChange(7)}>
+          7
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(8)}>
+          8
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(9)}>
+          9
+        </button>
       </div>
       <div style={buttonStyle.row}>
-        <button style={buttonStyle.button}>.</button>
-        <button style={buttonStyle.button}>0</button>
-        <button style={buttonStyle.button}>=</button>
+        <button style={buttonStyle.button} onClick={() => handleChange('.')}>
+          .
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(0)}>
+          0
+        </button>
+        <button style={buttonStyle.button} onClick={() => handleChange(0)}>
+          =
+        </button>
       </div>
     </div>
   )

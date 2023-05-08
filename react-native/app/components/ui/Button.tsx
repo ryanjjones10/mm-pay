@@ -19,6 +19,7 @@ function Button({
         fontSize: '0.875rem',
         borderRadius: '25px',
         lineHeight: '1.25rem',
+        border: 'none',
         ...style,
       }}
     >
