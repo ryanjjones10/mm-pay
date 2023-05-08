@@ -25,6 +25,7 @@
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "expo": "^48.0.16",
+    "expo-clipboard": "~4.1.2",
     "expo-constants": "^14.2.1",
     "expo-font": "~11.1.1",
     "expo-linking": "^4.0.1",

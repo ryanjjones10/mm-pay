@@ -1,0 +1,2 @@
+export const testBal = 1234.5678
+export const testAddr = '0x0000111122223333444455556666777788889999'

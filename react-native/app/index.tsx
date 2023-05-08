@@ -1,16 +1,17 @@
+import { Link } from 'expo-router'
 import { Text, Image, View, StyleSheet } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 import BlockLogo from '@app/assets/blockLogo.png'
 import { Avatar } from '@app/components/ui/Avatar'
 import WalletValue from '@app/components/WalletValue'
 import { button, colors } from '@app/styles/common'
-import Button from '@app/components/ui/Button'
 import Card from '@app/components/ui/Card'
 import Section from '@app/components/ui/Section'
 import TokenTable from '@app/components/TokenTable'
 import { accountResponse } from '@app/services/account'
-import { Link } from 'expo-router'
 import { Main } from '@app/components/layout/Main'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import { testAddr, testBal } from './constants'
 
 const Home = () => {
   const tokens = accountResponse.tokenBalances
@@ -49,7 +50,7 @@ const Home = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor:colors.primaryBrand
+      backgroundColor: colors.primaryBrand,
     },
     cardHeader: {
       fontSize: 16,
@@ -72,7 +73,7 @@ const Home = () => {
         </View>
       </View>
       <Section>
-        <WalletValue value={2540} />
+        <WalletValue value={testBal} address={testAddr} />
       </Section>
       <Section>
         <View style={style.actionBar}>

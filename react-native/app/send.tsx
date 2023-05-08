@@ -1,10 +1,8 @@
 import Keypad from '@app/components/Keypad'
 import { Main } from '@app/components/layout/Main'
-import Button from '@app/components/ui/Button'
 import { button, colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
 import { Link } from 'expo-router'
-import { send } from 'process'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, View, Text } from 'react-native'
 

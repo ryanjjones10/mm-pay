@@ -1,5 +1,4 @@
 import { colors } from '@app/styles/common'
-import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { StyleSheet, View, Pressable, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'

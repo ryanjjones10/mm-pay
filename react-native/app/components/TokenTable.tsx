@@ -5,7 +5,7 @@ import { Image, Text, View } from 'react-native'
 
 function TokenTable({ tokens }: { tokens: any }) {
   return (
-    <View style={{ marginRight: '0px', width: '100%' }}>
+    <View style={{ marginRight: 0, width: '100%' }}>
       {tokens?.map((token, i) => {
         const { symbol, name, iconUrl, balance, value } = token
         return (
