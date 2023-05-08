@@ -5,16 +5,18 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 const buttonStyle = StyleSheet.create({
   button: {
-    padding: '25px 5px',
+    padding: 25,
     backgroundColor: colors.primaryBackground,
     color: colors.text,
-    fontSize: '1.5rem',
+    fontSize: 24,
     border: 'none',
   },
   row: {
     display: 'flex',
-    padding: '25px',
+    flexDirection: 'row',
+    padding: 25,
     justifyContent: 'space-between',
+    width: '100%',
   },
 })
 

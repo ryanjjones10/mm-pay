@@ -6,10 +6,11 @@ import { Image, Text, View } from 'react-native'
 function TokenTable({ tokens }: { tokens: any }) {
   return (
     <View style={{ marginRight: '0px', width: '100%' }}>
-      {tokens?.map((token) => {
+      {tokens?.map((token, i) => {
         const { symbol, name, iconUrl, balance, value } = token
         return (
           <View
+            key={i}
             style={{
               display: 'flex',
               flexDirection: 'row',

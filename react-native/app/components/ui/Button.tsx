@@ -5,12 +5,10 @@ import { Pressable } from 'react-native'
 export default function ({
   variant = 'primary',
   onClick,
-  style,
   children,
 }: {
   variant?: 'primary' | 'secondary'
   onClick?: any
-  style?: any
   children: string | ReactElement
 }) {
   return (

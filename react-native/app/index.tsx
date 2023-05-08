@@ -2,7 +2,7 @@ import { Text, Image, View, StyleSheet } from 'react-native'
 import BlockLogo from '@app/assets/blockLogo.png'
 import { Avatar } from '@app/components/ui/Avatar'
 import WalletValue from '@app/components/WalletValue'
-import { colors } from '@app/styles/common'
+import { button, colors } from '@app/styles/common'
 import Button from '@app/components/ui/Button'
 import Card from '@app/components/ui/Card'
 import Section from '@app/components/ui/Section'
@@ -37,10 +37,19 @@ const Home = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    buttonContent: {
+    secondaryButton: {
+      ...button,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: 'inherit',
+    },
+    primaryButton: {
+      ...button,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor:colors.primaryBrand
     },
     cardHeader: {
       fontSize: 16,
@@ -69,28 +78,24 @@ const Home = () => {
         <View style={style.actionBar}>
           <View style={{ marginRight: 10 }}>
             <Link href="/receive">
-              <Button variant="secondary">
-                <View style={style.buttonContent}>
-                  <Icon
-                    name="qrcode"
-                    size={15}
-                    style={{ color: colors.primaryBrand }}
-                  />
-                  <Text style={{ marginLeft: 7, color: colors.primaryBrand }}>
-                    Receive
-                  </Text>
-                </View>
-              </Button>
+              <View style={style.secondaryButton}>
+                <Icon
+                  name="qrcode"
+                  size={15}
+                  style={{ color: colors.primaryBrand }}
+                />
+                <Text style={{ marginLeft: 7, color: colors.primaryBrand }}>
+                  Receive
+                </Text>
+              </View>
             </Link>
           </View>
           <View style={{ marginLeft: 10 }}>
             <Link href="/send">
-              <Button>
-                <View style={style.buttonContent}>
-                  <Icon name="send" size={15} />
-                  <Text style={{ marginLeft: 7 }}>Send</Text>
-                </View>
-              </Button>
+              <View style={style.primaryButton}>
+                <Icon name="send" size={15} />
+                <Text style={{ marginLeft: 7 }}>Send</Text>
+              </View>
             </Link>
           </View>
         </View>

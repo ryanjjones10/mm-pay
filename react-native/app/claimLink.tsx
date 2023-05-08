@@ -39,13 +39,16 @@ function ClaimLink() {
           height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
-          textAlign: 'center',
-          verticalAlign: 'middle',
-          marginTop: 150,
         }}
       >
         <View>
-          <View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}
+          >
             <Icon
               name="check-circle"
               size={20}
@@ -65,16 +68,12 @@ function ClaimLink() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: ' center',
             marginTop: 20,
+            flexDirection: 'row',
           }}
         >
-          <Button
-            style={{ margin: 10, display: 'flex' }}
-            variant="secondary"
-            onClick={copyToClipboard}
-          >
-            <View>
+          <Button variant="secondary" onClick={copyToClipboard}>
+            <View style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
               <Icon
                 name="copy"
                 size={15}
@@ -85,11 +84,8 @@ function ClaimLink() {
               </Text>
             </View>
           </Button>
-          <Button
-            style={{ margin: 10, display: 'flex' }}
-            onClick={handleShare}
-          >
-            <View>
+          <Button onClick={handleShare}>
+            <View style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
               <Icon
                 name="share-square-o"
                 size={15}
