@@ -13,13 +13,14 @@ function Button({
   return (
     <button
       style={{
-        backgroundColor: variant === 'primary' ? colors.primaryBrand : 'white',
-        color: variant === 'primary' ? colors.text : colors.primaryBrand,
+        backgroundColor:
+          variant === 'primary' ? colors.primaryBrand : 'inherit',
+        border: '1px solid ' + colors.primaryBrand,
+        color: variant === 'primary' ? colors.white : colors.primaryBrand,
         padding: '0.5rem 0.75rem',
         fontSize: '0.875rem',
         borderRadius: '25px',
         lineHeight: '1.25rem',
-        border: 'none',
         ...style,
       }}
     >

@@ -10,6 +10,7 @@ import TokenTable from '@app/components/TokenTable'
 import { accountResponse } from '@app/services/account'
 import { Link } from 'expo-router'
 import { Main } from '@app/components/layout/Main'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const Home = () => {
   const tokens = accountResponse.tokenBalances
@@ -42,12 +43,25 @@ const Home = () => {
             justifyContent: ' center',
           }}
         >
-          <Button style={{ margin: '0px 10px' }}>
-            <Link href="/receive">Receive</Link>
-          </Button>
-          <Button style={{ margin: '0px 10px' }} variant="secondary">
-            <Link href="/send">Send</Link>
-          </Button>
+          <Link href="/receive">
+            <Button
+              style={{ margin: '0px 10px', display: 'flex' }}
+              variant="secondary"
+            >
+              <div>
+                <Icon name="qrcode" size={15} />
+                <span style={{ marginLeft: '7px' }}>Receive</span>
+              </div>
+            </Button>
+          </Link>
+          <Link href="/send">
+            <Button style={{ margin: '0px 10px', display: 'flex' }}>
+              <div>
+                <Icon name="send" size={15} />
+                <span style={{ marginLeft: '7px' }}>Send</span>
+              </div>
+            </Button>
+          </Link>
         </div>
       </Section>
       <Section>
