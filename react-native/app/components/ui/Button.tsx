@@ -3,15 +3,18 @@ import { colors } from '@app/styles/common'
 
 function Button({
   variant = 'primary',
+  onClick,
   style,
   children,
 }: {
   variant?: 'primary' | 'secondary'
+  onClick?: any
   style?: any
   children: string | ReactElement
 }) {
   return (
     <button
+      onClick={onClick}
       style={{
         backgroundColor:
           variant === 'primary' ? colors.primaryBrand : 'inherit',

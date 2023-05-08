@@ -5,4 +5,5 @@ export const colors = {
   secondaryBackground: '#1e1f24',
   primaryBrand: '#496ce9',
   white: '#ffffff',
+  success: '#22c55e',
 }

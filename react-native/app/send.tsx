@@ -3,6 +3,7 @@ import { Main } from '@app/components/layout/Main'
 import Button from '@app/components/ui/Button'
 import { colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
+import { Link } from 'expo-router'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 
@@ -40,9 +41,11 @@ export const Send = () => {
           <div style={{ alignItems: 'baseline' }}>
             <Keypad onChange={handleChange} />
           </div>
-          <Button style={{ width: '100%', margin: '20px 0px' }}>
-            Hold to create link
-          </Button>
+          <Link href="/claimLink">
+            <Button style={{ width: '100%', margin: '20px 0px' }}>
+              Hold to create link
+            </Button>
+          </Link>
         </div>
       </KeyboardAvoidingView>
     </Main>

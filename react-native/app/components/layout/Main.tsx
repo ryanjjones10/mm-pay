@@ -13,7 +13,7 @@ export const Main = ({
   })
 
   if (!fontsLoaded) {
-    return null
+    return <div></div>
   }
   return (
     <View style={{}}>

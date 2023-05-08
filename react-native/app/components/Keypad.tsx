@@ -1,6 +1,7 @@
 import { colors } from '@app/styles/common'
 import React from 'react'
 import { StyleSheet } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const buttonStyle = StyleSheet.create({
   button: {
@@ -64,7 +65,7 @@ function Keypad({ onChange }: { onChange: any }) {
           0
         </button>
         <button style={buttonStyle.button} onClick={() => handleChange(0)}>
-          =
+          <Icon name="arrow-left" size={20} style={{ color: colors.text }} />
         </button>
       </div>
     </div>
