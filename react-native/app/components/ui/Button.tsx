@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react'
 import { colors } from '@app/styles/common'
+import { Pressable } from 'react-native'
 
-function Button({
+export default function ({
   variant = 'primary',
   onClick,
   style,
@@ -13,23 +14,23 @@ function Button({
   children: string | ReactElement
 }) {
   return (
-    <button
-      onClick={onClick}
+    <Pressable
+      onPress={onClick}
       style={{
         backgroundColor:
           variant === 'primary' ? colors.primaryBrand : 'inherit',
-        border: '1px solid ' + colors.primaryBrand,
-        color: variant === 'primary' ? colors.white : colors.primaryBrand,
-        padding: '0.5rem 0.75rem',
-        fontSize: '0.875rem',
-        borderRadius: '25px',
-        lineHeight: '1.25rem',
-        ...style,
+        borderColor: colors.primaryBrand,
+        borderWidth: 1,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignContent: 'center',
       }}
     >
       {children}
-    </button>
+    </Pressable>
   )
 }
-
-export default Button

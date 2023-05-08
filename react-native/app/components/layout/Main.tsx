@@ -13,20 +13,20 @@ export const Main = ({
   })
 
   if (!fontsLoaded) {
-    return <div></div>
+    return undefined
   }
   return (
-    <View style={{}}>
-      <div
-        style={{
-          backgroundColor: colors.primaryBackground,
-          padding: '20px 25px',
-          height: '100vh',
-          fontFamily: 'Roboto',
-        }}
-      >
-        {children}
-      </div>
+    <View
+      style={{
+        backgroundColor: colors.primaryBackground,
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingLeft: 25,
+        paddingRight: 25,
+        height: '100%',
+      }}
+    >
+      {children}
     </View>
   )
 }

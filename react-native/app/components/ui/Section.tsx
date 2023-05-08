@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react'
+import { View } from 'react-native'
 
 function Section({ children }: { children: ReactElement }) {
-  return <section style={{ margin: '30px 0px' }}>{children}</section>
+  return <View style={{ marginTop: 20, marginBottom: 20 }}>{children}</View>
 }
 
 export default Section

@@ -1,4 +1,4 @@
-import { Text, Image } from 'react-native'
+import { Text, Image, View, StyleSheet } from 'react-native'
 import BlockLogo from '@app/assets/blockLogo.png'
 import { Avatar } from '@app/components/ui/Avatar'
 import WalletValue from '@app/components/WalletValue'
@@ -15,61 +15,94 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 const Home = () => {
   const tokens = accountResponse.tokenBalances
 
+  const style = StyleSheet.create({
+    header: {
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+    },
+    brand: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    logo: {
+      height: 25,
+      width: 25,
+    },
+    actionBar: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonContent: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    cardHeader: {
+      fontSize: 16,
+      color: colors.text,
+      fontWeight: '600',
+    },
+  })
+
   return (
     <Main>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: ' space-between',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Image source={BlockLogo} style={{ height: '25px', width: '25px' }} />
-          <Text style={{ marginLeft: '7px', color: colors.text }}>Pay</Text>
-        </div>
-        <div>
-          <Avatar>A</Avatar>
-        </div>
-      </div>
+      <View style={style.header}>
+        <View style={style.brand}>
+          <Image source={BlockLogo} style={style.logo} />
+          <Text style={{ marginLeft: 7, color: colors.text }}>Pay</Text>
+        </View>
+        <View>
+          <Avatar>
+            <Text>A</Text>
+          </Avatar>
+        </View>
+      </View>
       <Section>
         <WalletValue value={2540} />
       </Section>
       <Section>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: ' center',
-          }}
-        >
-          <Link href="/receive">
-            <Button
-              style={{ margin: '0px 10px', display: 'flex' }}
-              variant="secondary"
-            >
-              <div>
-                <Icon name="qrcode" size={15} />
-                <span style={{ marginLeft: '7px' }}>Receive</span>
-              </div>
-            </Button>
-          </Link>
-          <Link href="/send">
-            <Button style={{ margin: '0px 10px', display: 'flex' }}>
-              <div>
-                <Icon name="send" size={15} />
-                <span style={{ marginLeft: '7px' }}>Send</span>
-              </div>
-            </Button>
-          </Link>
-        </div>
+        <View style={style.actionBar}>
+          <View style={{ marginRight: 10 }}>
+            <Link href="/receive">
+              <Button variant="secondary">
+                <View style={style.buttonContent}>
+                  <Icon
+                    name="qrcode"
+                    size={15}
+                    style={{ color: colors.primaryBrand }}
+                  />
+                  <Text style={{ marginLeft: 7, color: colors.primaryBrand }}>
+                    Receive
+                  </Text>
+                </View>
+              </Button>
+            </Link>
+          </View>
+          <View style={{ marginLeft: 10 }}>
+            <Link href="/send">
+              <Button>
+                <View style={style.buttonContent}>
+                  <Icon name="send" size={15} />
+                  <Text style={{ marginLeft: 7 }}>Send</Text>
+                </View>
+              </Button>
+            </Link>
+          </View>
+        </View>
       </Section>
       <Section>
         <Card>
-          <div>
-            <div style={{ marginBottom: '10px' }}>Tokens</div>
+          <View>
+            <View style={{ marginBottom: 10 }}>
+              <Text style={style.cardHeader}>Tokens</Text>
+            </View>
             <TokenTable tokens={tokens} />
-          </div>
+          </View>
         </Card>
       </Section>
     </Main>

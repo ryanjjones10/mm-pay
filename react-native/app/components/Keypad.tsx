@@ -1,6 +1,6 @@
 import { colors } from '@app/styles/common'
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View, Pressable, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 const buttonStyle = StyleSheet.create({
@@ -23,52 +23,52 @@ function Keypad({ onChange }: { onChange: any }) {
     onChange(value)
   }
   return (
-    <div>
-      <div style={buttonStyle.row}>
-        <button style={buttonStyle.button} onClick={() => handleChange(1)}>
-          1
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(2)}>
-          2
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(3)}>
-          3
-        </button>
-      </div>
-      <div style={buttonStyle.row}>
-        <button style={buttonStyle.button} onClick={() => handleChange(4)}>
-          4
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(5)}>
-          5
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(6)}>
-          6
-        </button>
-      </div>
-      <div style={buttonStyle.row}>
-        <button style={buttonStyle.button} onClick={() => handleChange(7)}>
-          7
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(8)}>
-          8
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(9)}>
-          9
-        </button>
-      </div>
-      <div style={buttonStyle.row}>
-        <button style={buttonStyle.button} onClick={() => handleChange('.')}>
-          .
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(0)}>
-          0
-        </button>
-        <button style={buttonStyle.button} onClick={() => handleChange(0)}>
+    <View>
+      <View style={buttonStyle.row}>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(1)}>
+          <Text style={{ color: colors.text }}>1</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(2)}>
+          <Text style={{ color: colors.text }}>2</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(3)}>
+          <Text style={{ color: colors.text }}>3</Text>
+        </Pressable>
+      </View>
+      <View style={buttonStyle.row}>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(4)}>
+          <Text style={{ color: colors.text }}>4</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(5)}>
+          <Text style={{ color: colors.text }}>5</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(6)}>
+          <Text style={{ color: colors.text }}>6</Text>
+        </Pressable>
+      </View>
+      <View style={buttonStyle.row}>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(7)}>
+          <Text style={{ color: colors.text }}>7</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(8)}>
+          <Text style={{ color: colors.text }}>8</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(9)}>
+          <Text style={{ color: colors.text }}>9</Text>
+        </Pressable>
+      </View>
+      <View style={buttonStyle.row}>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange('.')}>
+          <Text style={{ color: colors.text }}>.</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(0)}>
+          <Text style={{ color: colors.text }}>0</Text>
+        </Pressable>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(0)}>
           <Icon name="arrow-left" size={20} style={{ color: colors.text }} />
-        </button>
-      </div>
-    </div>
+        </Pressable>
+      </View>
+    </View>
   )
 }
 

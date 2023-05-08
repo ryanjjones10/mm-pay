@@ -5,7 +5,7 @@ import { colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
 import { Link } from 'expo-router'
 import React, { useState } from 'react'
-import { KeyboardAvoidingView } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 
 export const Send = () => {
   const [sendAmount, setSendAmount] = useState('0')
@@ -16,37 +16,36 @@ export const Send = () => {
   return (
     <Main>
       <KeyboardAvoidingView>
-        <div style={{ height: '100vh', justifyItems: 'baseline' }}>
-          <div
+        <View style={{ height: '100vh' }}>
+          <View
             style={{
               display: 'flex',
-              justifyItems: 'center',
               textAlign: 'center',
               width: '100%',
-              padding: '60px 0px',
+              padding: 60,
             }}
           >
-            <div
+            <View
               style={{
                 color: colors.text,
-                fontSize: '2rem',
+                fontSize: 30,
                 display: 'flex',
                 width: '100%',
                 justifyContent: 'center',
               }}
             >
               {formatCurrency(sendAmount)}
-            </div>
-          </div>
-          <div style={{ alignItems: 'baseline' }}>
+            </View>
+          </View>
+          <View style={{ alignItems: 'baseline' }}>
             <Keypad onChange={handleChange} />
-          </div>
+          </View>
           <Link href="/claimLink">
             <Button style={{ width: '100%', margin: '20px 0px' }}>
               Hold to create link
             </Button>
           </Link>
-        </div>
+        </View>
       </KeyboardAvoidingView>
     </Main>
   )

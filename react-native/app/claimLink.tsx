@@ -2,7 +2,7 @@ import { Main } from '@app/components/layout/Main'
 import { colors } from '@app/styles/common'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { Text, Clipboard, Share, Alert } from 'react-native'
+import { Text, Clipboard, Share, Alert, View } from 'react-native'
 import Button from '@app/components/ui/Button'
 
 function ClaimLink() {
@@ -34,68 +34,74 @@ function ClaimLink() {
 
   return (
     <Main>
-      <div
+      <View
         style={{
           height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
           verticalAlign: 'middle',
-          marginTop: '150px',
+          marginTop: 150,
         }}
       >
-        <div style={{ color: colors.success }}>
-          <div>
+        <View>
+          <View>
             <Icon
               name="check-circle"
               size={20}
-              style={{ color: colors.success, marginRight: '10px' }}
+              style={{ color: colors.success, marginRight: 10 }}
             />
-          </div>
-          <div style={{ marginTop: '10px' }}>
-            <Text style={{ color: colors.success, fontWeight: 600 }}>
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={{ color: colors.success, fontWeight: '600' }}>
               Heres the link!
             </Text>
-          </div>
-        </div>
-        <div style={{ marginTop: '20px', color: colors.text }}>{claimLink}</div>
-        <div
+          </View>
+        </View>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ color: colors.text }}>{claimLink}</Text>
+        </View>
+        <View
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: ' center',
-            marginTop: '20px',
+            marginTop: 20,
           }}
         >
           <Button
-            style={{ margin: '0px 10px', display: 'flex' }}
+            style={{ margin: 10, display: 'flex' }}
             variant="secondary"
             onClick={copyToClipboard}
           >
-            <div>
+            <View>
               <Icon
                 name="copy"
                 size={15}
                 style={{ color: colors.primaryBrand }}
               />
-              <span style={{ marginLeft: '7px' }}>Copy</span>
-            </div>
+              <Text style={{ marginLeft: '7px', color: colors.text }}>
+                Copy
+              </Text>
+            </View>
           </Button>
           <Button
-            style={{ margin: '0px 10px', display: 'flex' }}
+            style={{ margin: 10, display: 'flex' }}
             onClick={handleShare}
           >
-            <div>
+            <View>
               <Icon
                 name="share-square-o"
                 size={15}
                 style={{ color: colors.text }}
               />
-              <span style={{ marginLeft: '7px' }}>Share</span>
-            </div>
+              <Text style={{ marginLeft: '7px', color: colors.text }}>
+                Share
+              </Text>
+            </View>
           </Button>
-        </div>
-      </div>
+        </View>
+      </View>
     </Main>
   )
 }

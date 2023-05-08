@@ -1,5 +1,6 @@
 import { colors } from '@app/styles/common'
 import React, { ReactElement } from 'react'
+import { View } from 'react-native'
 
 function Card({
   children,
@@ -9,17 +10,17 @@ function Card({
   style?: any
 }) {
   return (
-    <div
+    <View
       style={{
         backgroundColor: colors.secondaryBackground,
-        padding: '1.25rem',
-        borderRadius: '1rem',
+        padding: 20,
+        borderRadius: 15,
         color: colors.text,
         ...style,
       }}
     >
       {children}
-    </div>
+    </View>
   )
 }
 

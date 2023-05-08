@@ -115,7 +115,7 @@ export const getDecimals = (value: string) =>
 const calculateGasUsedPercentage = (gasLimit: string, gasUsed: string) => {
   const gasLimitBN = bigify(gasLimit)
   const gasUsedBN = bigify(gasUsed)
-  return gasUsedBN.div(gasLimitBN).multipliedBy(bigify(100))
+  return gasUsedBN.View(gasLimitBN).multipliedBy(bigify(100))
 }
 
 const gasPriceToBase = (price: string | number) =>
