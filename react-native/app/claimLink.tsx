@@ -79,9 +79,7 @@ function ClaimLink() {
                 size={15}
                 style={{ color: colors.primaryBrand }}
               />
-              <Text style={{ marginLeft: '7px', color: colors.text }}>
-                Copy
-              </Text>
+              <Text style={{ marginLeft: 7, color: colors.text }}>Copy</Text>
             </View>
           </Button>
           <Button onClick={handleShare}>
@@ -91,9 +89,7 @@ function ClaimLink() {
                 size={15}
                 style={{ color: colors.text }}
               />
-              <Text style={{ marginLeft: '7px', color: colors.text }}>
-                Share
-              </Text>
+              <Text style={{ marginLeft: 7, color: colors.text }}>Share</Text>
             </View>
           </Button>
         </View>
