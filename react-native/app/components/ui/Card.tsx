@@ -1,7 +1,7 @@
 import { colors } from '@app/styles/common'
 import React, { ReactElement } from 'react'
 
-function Card({ children }: { children: ReactElement }) {
+function Card({ children, style }: { children: ReactElement; style?: any }) {
   return (
     <div
       style={{
@@ -9,6 +9,7 @@ function Card({ children }: { children: ReactElement }) {
         padding: '1.25rem',
         borderRadius: '1rem',
         color: colors.text,
+        ...style,
       }}
     >
       {children}

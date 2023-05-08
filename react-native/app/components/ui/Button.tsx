@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { colors } from '@app/styles/common'
 
 function Button({
@@ -7,8 +7,8 @@ function Button({
   children,
 }: {
   variant?: 'primary' | 'secondary'
-  style: any
-  children: string
+  style?: any
+  children: string | ReactElement
 }) {
   return (
     <button
