@@ -6,7 +6,7 @@ function Button({
   style,
   children,
 }: {
-  variant: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary'
   style: any
   children: string
 }) {

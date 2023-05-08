@@ -1,4 +1,6 @@
-export const Avatar = () => (
+import { ReactElement } from 'react'
+
+export const Avatar = ({ children }: { children: ReactElement | string }) => (
   <div
     style={{
       height: '30px',
@@ -10,6 +12,6 @@ export const Avatar = () => (
       display: 'flex',
     }}
   >
-    A
+    {children}
   </div>
 )

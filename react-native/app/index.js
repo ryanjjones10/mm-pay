@@ -1,11 +1,26 @@
 import { View, Text, Image } from 'react-native'
-import BlockLogo from './assets/blockLogo.png'
-import { Avatar } from '@app/components/Avatar'
+import BlockLogo from '@app/assets/blockLogo.png'
+import { Avatar } from '@app/components/ui/Avatar'
 import WalletValue from '@app/components/WalletValue'
 import { colors } from '@app/styles/common'
-import Button from '@app/components/Button'
+import Button from '@app/components/ui/Button'
+import Card from '@app/components/ui/Card'
+import Section from '@app/components/ui/Section'
+import TokenTable from '@app/components/TokenTable'
+import { accountResponse } from '@app/services/account'
+import { useFonts } from 'expo-font'
 
 const Home = () => {
+  const [fontsLoaded] = useFonts({
+    'Inter-Black': require('./assets/fonts/Roboto-Regular.ttf'),
+  })
+
+  if (!fontsLoaded) {
+    return null
+  }
+
+  const tokens = accountResponse.tokenBalances
+
   return (
     <View>
       <div
@@ -13,6 +28,7 @@ const Home = () => {
           backgroundColor: colors.primaryBackground,
           padding: '20px 25px',
           height: '100vh',
+          fontFamily: 'Roboto',
         }}
       >
         <div
@@ -30,13 +46,13 @@ const Home = () => {
             <Text style={{ marginLeft: '7px', color: colors.text }}>Pay</Text>
           </div>
           <div>
-            <Avatar />
+            <Avatar>A</Avatar>
           </div>
         </div>
-        <div style={{ margin: '20px 0px' }}>
+        <Section>
           <WalletValue value={2540} />
-        </div>
-        <div style={{ margin: '20px 0px' }}>
+        </Section>
+        <Section>
           <div
             style={{
               display: 'flex',
@@ -49,7 +65,15 @@ const Home = () => {
               Send
             </Button>
           </div>
-        </div>
+        </Section>
+        <Section>
+          <Card>
+            <div>
+              <div style={{ marginBottom: '10px' }}>Tokens</div>
+              <TokenTable tokens={tokens} />
+            </div>
+          </Card>
+        </Section>
       </div>
     </View>
   )
