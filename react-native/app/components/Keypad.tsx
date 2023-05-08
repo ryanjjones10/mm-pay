@@ -1,4 +1,5 @@
 import { colors } from '@app/styles/common'
+import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { StyleSheet, View, Pressable, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -20,9 +21,32 @@ const buttonStyle = StyleSheet.create({
   },
 })
 
-function Keypad({ onChange }: { onChange: any }) {
+function Keypad({ current, onChange }: { current: string; onChange: any }) {
   const handleChange = (value) => {
-    onChange(value)
+    let newValue = value
+    // handle backspace
+    if (value === -1) {
+      // handle backspace & 1 digit left
+      if (current.length === 1) {
+        newValue = '0'
+      } else {
+        newValue = current.slice(0, -1)
+      }
+    }
+    // handle adding a digit
+    else {
+      // handle adding a digit when 0 is current value
+      if (current === '0') {
+        newValue = value.toString()
+      } else {
+        newValue = `${current}${value}`
+      }
+    }
+    if (newValue === '') {
+      onChange('0')
+    }
+    console.debug(`current is ${newValue}, oldValue is ${value}`)
+    onChange(newValue)
   }
   return (
     <View>
@@ -66,7 +90,7 @@ function Keypad({ onChange }: { onChange: any }) {
         <Pressable style={buttonStyle.button} onPress={() => handleChange(0)}>
           <Text style={{ color: colors.text }}>0</Text>
         </Pressable>
-        <Pressable style={buttonStyle.button} onPress={() => handleChange(0)}>
+        <Pressable style={buttonStyle.button} onPress={() => handleChange(-1)}>
           <Icon name="arrow-left" size={20} style={{ color: colors.text }} />
         </Pressable>
       </View>

@@ -4,6 +4,7 @@ import Button from '@app/components/ui/Button'
 import { button, colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
 import { Link } from 'expo-router'
+import { send } from 'process'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, View, Text } from 'react-native'
 
@@ -31,11 +32,13 @@ export const Send = () => {
                 fontSize: 30,
               }}
             >
-              {formatCurrency(sendAmount)}
+              {sendAmount === '0'
+                ? '$0'
+                : formatCurrency(parseFloat(sendAmount)).toString()}
             </Text>
           </View>
           <View style={{ alignItems: 'baseline' }}>
-            <Keypad onChange={handleChange} />
+            <Keypad current={sendAmount} onChange={handleChange} />
           </View>
           <View style={{ width: '100%', margin: 10, ...button }}>
             <Link href="/claimLink">
