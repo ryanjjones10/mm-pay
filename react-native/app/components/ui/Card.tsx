@@ -1,7 +1,13 @@
 import { colors } from '@app/styles/common'
 import React, { ReactElement } from 'react'
 
-function Card({ children, style }: { children: ReactElement; style?: any }) {
+function Card({
+  children,
+  style,
+}: {
+  children: ReactElement | ReactElement[]
+  style?: any
+}) {
   return (
     <div
       style={{

@@ -2,7 +2,11 @@ import { colors } from '@app/styles/common'
 import React, { ReactElement } from 'react'
 import { View } from 'react-native'
 
-export const Main = ({ children }: { children: ReactElement }) => {
+export const Main = ({
+  children,
+}: {
+  children: ReactElement | ReactElement[]
+}) => {
   return (
     <View>
       <div

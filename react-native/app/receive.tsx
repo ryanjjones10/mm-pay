@@ -3,7 +3,7 @@ import Card from '@app/components/ui/Card'
 import React from 'react'
 import QRCode from 'react-qr-code'
 
-export default Receive = () => {
+const Receive = () => {
   return (
     <Main>
       <Card
@@ -19,3 +19,5 @@ export default Receive = () => {
     </Main>
   )
 }
+
+export default Receive
