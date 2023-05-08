@@ -10,7 +10,7 @@ export default function WalletValue({ value }: { value: number }) {
         justifyContent: 'center',
         display: 'flex',
         alignItems: 'center',
-        fontSize: '3rem',
+        fontSize: '2.5rem',
         fontWeight: 600,
         color: colors.text,
       }}

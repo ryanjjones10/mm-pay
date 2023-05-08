@@ -8,19 +8,10 @@ import Card from '@app/components/ui/Card'
 import Section from '@app/components/ui/Section'
 import TokenTable from '@app/components/TokenTable'
 import { accountResponse } from '@app/services/account'
-import { useFonts } from 'expo-font'
 import { Link } from 'expo-router'
 import { Main } from '@app/components/layout/Main'
 
 const Home = () => {
-  const [fontsLoaded] = useFonts({
-    'Inter-Black': require('./assets/fonts/Roboto-Regular.ttf'),
-  })
-
-  if (!fontsLoaded) {
-    return null
-  }
-
   const tokens = accountResponse.tokenBalances
 
   return (
