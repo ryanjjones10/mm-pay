@@ -28,6 +28,7 @@ import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 
+
 const formatTokens = (account: StoreAccount) =>
   [
     {
@@ -186,6 +187,22 @@ const Home = () => {
             </Link>
           </View>
         </View>
+      </Section>
+      <Section>
+        <Card style={{ backgroundColor: 'rgba(255, 255, 0, 0.15)' }}>
+          <View>
+            <View style={{ marginBottom: 10 }}>
+              <Text style={style.cardHeader}>Time to secure your funds!</Text>
+            </View>
+            <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <View>
+                <Text style={{ color:'#0096FF', fontWeight: '600' }}>
+                  Secure your account
+                </Text>
+              </View>
+            </View>
+          </View>
+        </Card>
       </Section>
       <Section>
         <Card>
