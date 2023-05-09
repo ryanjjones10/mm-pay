@@ -3,12 +3,13 @@ import { convertToFiat } from '@app/utils'
 import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
+import { SvgUri } from 'react-native-svg'
 
 function TokenTable({ tokens }: { tokens: any }) {
   return (
     <View style={{ marginRight: 0, width: '100%' }}>
       {tokens?.map((token, i) => {
-        const { symbol, name, iconUrl, balance, value } = token
+        const { ticker, name, iconUrl, balance, value } = token
         return (
           <View
             key={i}
@@ -18,8 +19,8 @@ function TokenTable({ tokens }: { tokens: any }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               width: '100%',
-              paddingTop: 10,
-              paddingBottom: 10,
+              paddingTop: 8,
+              paddingBottom: 8,
             }}
           >
             <View
@@ -29,14 +30,23 @@ function TokenTable({ tokens }: { tokens: any }) {
                 alignItems: 'center',
               }}
             >
-              <Image
-                source={{ uri: iconUrl }}
-                style={{ height: 32, width: 32, marginRight: 10 }}
-              />
+              {iconUrl.includes('svg') ? (
+                <SvgUri
+                  uri={iconUrl}
+                  style={{ marginRight: 10 }}
+                  height={32}
+                  width={32}
+                />
+              ) : (
+                <Image
+                  source={{ uri: iconUrl }}
+                  style={{ height: 32, width: 32, marginRight: 10 }}
+                />
+              )}
               <View>
                 <View>
                   <Text style={{ fontWeight: '600', color: colors.text }}>
-                    {symbol}
+                    {ticker}
                   </Text>
                 </View>
                 <Text style={{ color: colors.secondaryText }}>{name}</Text>
@@ -61,7 +71,7 @@ function TokenTable({ tokens }: { tokens: any }) {
                     textAlign: 'right',
                   }}
                 >
-                  {parseFloat(balance?.toPrecision(6))} {symbol}
+                  {parseFloat(balance?.toPrecision(6))} {ticker}
                 </Text>
               </View>
             </View>

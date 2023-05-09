@@ -5,6 +5,7 @@ import { formatCurrency } from '@app/utils/currency'
 import { Link } from 'expo-router'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, View, Text } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 export const Send = () => {
   const [sendAmount, setSendAmount] = useState('0')
@@ -28,6 +29,7 @@ export const Send = () => {
               style={{
                 color: colors.text,
                 fontSize: 30,
+                textAlign: 'center',
               }}
             >
               {sendAmount === '0'
@@ -38,9 +40,31 @@ export const Send = () => {
           <View style={{ alignItems: 'baseline' }}>
             <Keypad current={sendAmount} onChange={handleChange} />
           </View>
-          <View style={{ width: '100%', margin: 10, ...button }}>
+          <View
+            style={{
+              width: '100%',
+              margin: 10,
+              backgroundColor: colors.primaryBrand,
+              justifyContent: 'center',
+              ...button,
+            }}
+          >
             <Link href="/claimLink">
-              <Text style={{ color: colors.primaryBrand }}>
+              <Icon
+                name="magic"
+                size={16}
+                style={{
+                  color: colors.text,
+                  textAlign: 'center',
+                }}
+              />
+              <Text
+                style={{
+                  color: colors.text,
+                  fontWeight: '600',
+                  textAlign: 'center',
+                }}
+              >
                 Hold to create link
               </Text>
             </Link>

@@ -164,8 +164,8 @@ const Home = () => {
           <View style={{ marginLeft: 10 }}>
             <Link href="/send">
               <View style={style.primaryButton}>
-                <Icon name="send" size={15} />
-                <Text style={{ marginLeft: 7 }}>Send</Text>
+                <Icon name="send" size={15} style={{ color: colors.text }} />
+                <Text style={{ marginLeft: 7, color: colors.text }}>Send</Text>
               </View>
             </Link>
           </View>

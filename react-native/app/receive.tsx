@@ -2,10 +2,13 @@ import { Main } from '@app/components/layout/Main'
 import Card from '@app/components/ui/Card'
 import React from 'react'
 import QRCode from 'react-qr-code'
-import { View, Text } from 'react-native'
-import { colors } from '@app/styles/common'
+import { View } from 'react-native'
+import { useAccounts } from '@app/services/AccountStore'
+import Address from '@app/components/Address'
 
 const Receive = () => {
+  const { account } = useAccounts()
+  const accountAddress = account?.address
   return (
     <Main>
       <Card
@@ -16,11 +19,9 @@ const Receive = () => {
         }}
       >
         <View style={{ marginBottom: 20 }}>
-          <Text style={{ marginLeft: 7, color: colors.text }}>
-            Account Address
-          </Text>
+          <Address address={accountAddress} isCopyable={true} />
         </View>
-        <QRCode value="accountAddress" />
+        <QRCode value={accountAddress} />
       </Card>
     </Main>
   )

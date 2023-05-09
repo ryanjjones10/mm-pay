@@ -73,7 +73,7 @@ function ClaimLink() {
           }}
         >
           <Button variant="secondary" onClick={copyToClipboard}>
-            <View style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
+            <View style={{ margin: 1, display: 'flex', flexDirection: 'row' }}>
               <Icon
                 name="copy"
                 size={15}
@@ -83,7 +83,7 @@ function ClaimLink() {
             </View>
           </Button>
           <Button onClick={handleShare}>
-            <View style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
+            <View style={{ margin: 1, display: 'flex', flexDirection: 'row' }}>
               <Icon
                 name="share-square-o"
                 size={15}
