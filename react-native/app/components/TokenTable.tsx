@@ -3,7 +3,7 @@ import { convertToFiat } from '@app/utils'
 import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
-import { SvgUri } from 'react-native-svg'
+import SvgUri from 'react-native-svg'
 
 function TokenTable({ tokens }: { tokens: any }) {
   return (
@@ -46,10 +46,12 @@ function TokenTable({ tokens }: { tokens: any }) {
               <View>
                 <View>
                   <Text style={{ fontWeight: '600', color: colors.text }}>
-                    {ticker}
+                    {ticker ?? 'Unknown Ticker'}
                   </Text>
                 </View>
-                <Text style={{ color: colors.secondaryText }}>{name}</Text>
+                <Text style={{ color: colors.secondaryText }}>
+                  {name ?? 'Unknown Name'}
+                </Text>
               </View>
             </View>
             <View style={{ padding: 10 }}>
