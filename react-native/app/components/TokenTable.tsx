@@ -9,7 +9,6 @@ function TokenTable({ tokens }: { tokens: any }) {
     <View style={{ marginRight: 0, width: '100%' }}>
       {tokens?.map((token, i) => {
         const { symbol, name, iconUrl, balance, value } = token
-        console.debug(token)
         return (
           <View
             key={i}

@@ -53,7 +53,6 @@ const Home = () => {
   const dispatch = useDispatch()
 
   const tokens = formatTokens(account)
-  console.debug(tokens)
   const totalValue = tokens.reduce(
     (acc, cur) => acc + parseFloat(cur.value.marketValue),
     0,
@@ -105,7 +104,6 @@ const Home = () => {
     /* @todo: remove test accounts */
     dispatch(updateAccount(acc))
   }
-  console.debug(account)
   return (
     <Main>
       <View style={style.header}>
