@@ -1,13 +1,10 @@
+import { Main } from '@app/components/layout/Main'
+import React, { useEffect } from 'react'
 import { Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-
-import { Main } from '@app/components/layout/Main'
 import Button from './components/ui/Button'
 
 let myAccount
-window.ethereum
-  .request({ method: 'eth_requestAccounts' })
-  .then((acc) => (myAccount = acc[0]))
 
 const types = {
   EIP712Domain: [
@@ -43,6 +40,13 @@ const delegation = {
 }
 
 export default function SignTest() {
+  useEffect(() => {
+    window.ethereum &&
+      window.ethereum
+        .request({ method: 'eth_requestAccounts' })
+        .then((acc) => (myAccount = acc[0]))
+  }, [])
+
   async function test1() {
     const msgParams = JSON.stringify({
       domain: {

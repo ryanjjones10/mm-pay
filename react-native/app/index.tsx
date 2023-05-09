@@ -21,12 +21,14 @@ import {
   LINEA_TESTNET_CHAINID,
   LINEA_USDC,
   testAccountNew,
-  testAccountWithBalancePreCheck,
 } from './constants'
-import { useDispatch } from './services/Store'
+import { appReset, useDispatch } from './services/Store'
 import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
+import { importedPrivateKey } from './constants/account'
+import { Wallet } from '@ethersproject/wallet'
+import { IS_DEV } from './config'
 
 
 const formatTokens = (account: StoreAccount) =>
@@ -108,6 +110,25 @@ const Home = () => {
     dispatch(updateAccount(acc))
   }
 
+  const createTestAccountWithPrivateKey = () => {
+    console.debug('createTestAccountWithPrivateKey invoked')
+    if (!importedPrivateKey || importedPrivateKey === '') {
+      console.error('No process.env.METAMASK_PAY_TEST_PRIVATE_KEY found')
+      return
+    }
+    const wallet = new Wallet(importedPrivateKey)
+    const newAccount = {
+      address: wallet.address,
+      privateKey: importedPrivateKey,
+      chainId: LINEA_TESTNET_CHAINID,
+    }
+    invokeCreateAccount(newAccount)
+  }
+
+  const resetAppState = () => {
+    dispatch(appReset())
+  }
+
   const createNewAccount = () => {
     const wallet = createRandomWallet()
     const newAccount = {
@@ -137,29 +158,38 @@ const Home = () => {
             <Button onClick={() => invokeCreateAccount(testAccountNew)}>
               <Text>Create acc (test)</Text>
             </Button>
-            <Button
-              onClick={() =>
-                invokeCreateAccount(testAccountWithBalancePreCheck)
-              }
-            >
-              <Text>Create acc (w/USDCBalance)</Text>
+            <Button onClick={() => createTestAccountWithPrivateKey()}>
+              <Text>Create acc (w/private key)</Text>
             </Button>
             <Button onClick={() => createNewAccount()}>
-              <Text>Create acc (new)</Text>
+              <Text>Create acc (generate new keypair)</Text>
             </Button>
           </View>
         </Section>
       ) : (
-        <Section>
-          {totalValue !== undefined ? (
-            <WalletValue
-              value={totalValue.toFixed(2)}
-              address={account.address}
-            />
-          ) : (
-            <Text>Loading...</Text>
+        <View>
+          <Section>
+            {totalValue !== undefined ? (
+              <WalletValue
+                value={totalValue.toFixed(2)}
+                address={account.address}
+              />
+            ) : (
+              <View>
+                <Text>Loading...</Text>
+              </View>
+            )}
+          </Section>
+          {IS_DEV && (
+            <Section>
+              <View style={style.actionBar}>
+                <Button onClick={() => resetAppState()}>
+                  <Text>Reset AppState</Text>
+                </Button>
+              </View>
+            </Section>
           )}
-        </Section>
+        </View>
       )}
 
       <Section>
