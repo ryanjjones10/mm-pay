@@ -22,12 +22,13 @@ import {
   LINEA_USDC,
   testAccountNew,
 } from './constants'
-import { useDispatch } from './services/Store'
+import { appReset, useDispatch } from './services/Store'
 import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 import { importedPrivateKey } from './constants/account'
 import { Wallet } from '@ethersproject/wallet'
+import { IS_DEV } from './config'
 
 const formatTokens = (account: StoreAccount) =>
   [
@@ -123,6 +124,10 @@ const Home = () => {
     invokeCreateAccount(newAccount)
   }
 
+  const resetAppState = () => {
+    dispatch(appReset())
+  }
+
   const createNewAccount = () => {
     const wallet = createRandomWallet()
     const newAccount = {
@@ -161,16 +166,29 @@ const Home = () => {
           </View>
         </Section>
       ) : (
-        <Section>
-          {totalValue !== undefined ? (
-            <WalletValue
-              value={totalValue.toFixed(2)}
-              address={account.address}
-            />
-          ) : (
-            <Text>Loading...</Text>
+        <View>
+          <Section>
+            {totalValue !== undefined ? (
+              <WalletValue
+                value={totalValue.toFixed(2)}
+                address={account.address}
+              />
+            ) : (
+              <View>
+                <Text>Loading...</Text>
+              </View>
+            )}
+          </Section>
+          {IS_DEV && (
+            <Section>
+              <View style={style.actionBar}>
+                <Button onClick={() => resetAppState()}>
+                  <Text>Reset AppState</Text>
+                </Button>
+              </View>
+            </Section>
           )}
-        </Section>
+        </View>
       )}
 
       <Section>
