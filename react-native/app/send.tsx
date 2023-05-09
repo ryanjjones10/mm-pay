@@ -8,6 +8,11 @@ import { createDelegation } from '@app/utils/delegation'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, View, Text, Pressable } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { hexZeroPad, hexConcat } from '@ethersproject/bytes'
+import { BigNumber } from '@ethersproject/bignumber'
+import { LINEA_NETWORK_CONFIG } from '@app/constants'
+import { ProviderHandler } from '@app/services'
+import { Signer } from '@ethersproject/abstract-signer'
 
 export const Send = () => {
   const { account } = useAccounts()
@@ -31,11 +36,67 @@ export const Send = () => {
     return { saltHex, destinationWalletAddress }
   }
 
-  const handleCreateClaimLink = () => {
+  const handleCreateClaimLink = async () => {
     const { saltHex, destinationWalletAddress } =
       createTargetSmartContractWalletAddress()
-    const delegationHash = createDelegation({ destinationWalletAddress })
-    const claimLink = `https://pay.metamask.io/${delegationHash}`
+
+    const rawTokenAmount = BigNumber.from(parseFloat(sendAmount) * 10 ** 6)
+
+    const inputTerms = hexZeroPad(rawTokenAmount.toHexString(), 32)
+    const termsWithSalt = hexConcat([inputTerms, saltHex])
+
+    const caveats = [
+      {
+        enforcer: 'contractAllowanceEnforcerAddress',
+        terms: termsWithSalt,
+      },
+    ]
+
+    const method = 'eth_signTypedData_v4'
+
+    let signature: any
+
+    // const allowanceAmount = BigNumber.from(1000 * 10 ** 6)
+    // if (!allowance || allowance.isZero() || allowance.lt(rawUSDCAmount)) {
+    //   const sig = await getPermitSignature(
+    //     signer.data,
+    //     { address: contractUSDCAddress.address },
+    //     contract.address,
+    //     allowanceAmount,
+    //     BigNumber.from(1990549033),
+    //     'USD Coin (PoS)',
+    //     permitNonce as BigNumber,
+    //   )
+
+    //   const approveTrxPopulated =
+    //     await managerContract?.populateTransaction.approveTransferProxy(
+    //       contractUSDCAddress.address,
+    //       me as `0x${string}`,
+    //       allowanceAmount,
+    //       BigNumber.from(1990549033),
+    //       sig.v,
+    //       sig.r as `0x${string}`,
+    //       sig.s as `0x${string}`,
+    //     )
+    //   signature = sig
+
+    //   appUserUpdate({ allowanceTrx: approveTrxPopulated?.data })
+    // }
+
+    const delegation = createDelegation({
+      destinationWalletAddress,
+      verifyingContractAddress: 'test',
+      caveats,
+      chainId: LINEA_NETWORK_CONFIG.chainId,
+    })
+    // const provider = new ProviderHandler(LINEA_NETWORK_CONFIG)
+    const signedDelegation = 'test'
+    // await signer.data?.provider?.send(method, [
+    //   accountAddress,
+    //   delegation.string,
+    // ])
+
+    const claimLink = `https://pay.metamask.io/${signedDelegation}`
     console.log(saltHex, claimLink)
   }
 
