@@ -1,8 +1,8 @@
-import { Main } from '@app/components/layout/Main';
-import React, { useEffect } from 'react';
-import { Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Button from './components/ui/Button';
+import { Main } from '@app/components/layout/Main'
+import React, { useEffect } from 'react'
+import { Text } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import Button from './components/ui/Button'
 
 let myAccount
 
