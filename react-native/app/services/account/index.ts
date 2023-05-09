@@ -52,7 +52,8 @@ export const accountResponse = {
       balance: 23.466834,
       accountAddress: '0x10f4b3dcdd89f00acde8db353ed5c7cab68bb69c',
       decimals: 6,
-      iconUrl: 'https://static.metaswap.codefi.network/api/v1/tokenIcons/137/0x2791bca1f2de4661ed88a30c99a7a9449aa84174.png',
+      iconUrl:
+        'https://static.metaswap.codefi.network/api/v1/tokenIcons/137/0x2791bca1f2de4661ed88a30c99a7a9449aa84174.png',
       coingeckoId: 'usd-coin',
       indexed: true,
       value: {

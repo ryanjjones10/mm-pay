@@ -1,3 +1,7 @@
+import { polyfillWebCrypto } from 'expo-standard-web-crypto'
+polyfillWebCrypto()
+
+import '@ethersproject/shims'
 import { Link } from 'expo-router'
 import { Text, Image, View, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -9,13 +13,50 @@ import { button, colors } from '@app/styles/common'
 import Card from '@app/components/ui/Card'
 import Section from '@app/components/ui/Section'
 import TokenTable from '@app/components/TokenTable'
-import { accountResponse } from '@app/services/account'
 import { Main } from '@app/components/layout/Main'
-import { testAddr, testBal } from './constants'
+import { useAccounts } from './services/AccountStore'
+import Button from './components/ui/Button'
+import {
+  LINEA_ETH,
+  LINEA_USDC,
+  testAccountNew,
+  testAccountWithBalancePreCheck,
+} from './constants'
+import { useDispatch } from './services/Store'
+import { bigify, isEmpty } from './utils'
+import { StoreAccount } from './types'
+
+const formatTokens = (account: StoreAccount) =>
+  [
+    {
+      ...LINEA_USDC,
+      balance: bigify(account.usdcBalance) ?? undefined,
+      value: {
+        marketValue: bigify(account.usdcBalance)
+          .multipliedBy(bigify(account.usdcRate))
+          .toFixed(2),
+      },
+    },
+    {
+      ...LINEA_ETH,
+      balance: bigify(account.nativeBalance) ?? undefined,
+      value: {
+        marketValue: bigify(account.nativeBalance)
+          .multipliedBy(bigify(account.nativeRate))
+          .toFixed(2),
+      },
+    },
+  ].filter((token) => token.balance?.gt(0))
 
 const Home = () => {
-  const tokens = accountResponse.tokenBalances
+  const { account, updateAccount } = useAccounts()
+  const dispatch = useDispatch()
 
+  const tokens = formatTokens(account)
+  const totalValue = tokens.reduce(
+    (acc, cur) => acc + parseFloat(cur.value.marketValue),
+    0,
+  )
   const style = StyleSheet.create({
     header: {
       width: '100%',
@@ -59,6 +100,10 @@ const Home = () => {
     },
   })
 
+  const invokeCreateAccount = (acc) => {
+    /* @todo: remove test accounts */
+    dispatch(updateAccount(acc))
+  }
   return (
     <Main>
       <View style={style.header}>
@@ -72,9 +117,34 @@ const Home = () => {
           </Avatar>
         </View>
       </View>
-      <Section>
-        <WalletValue value={testBal} address={testAddr} />
-      </Section>
+      {isEmpty(account) ? (
+        <Section>
+          <View style={style.actionBar}>
+            <Button onClick={() => invokeCreateAccount(testAccountNew)}>
+              <Text>Create acc (test)</Text>
+            </Button>
+            <Button
+              onClick={() =>
+                invokeCreateAccount(testAccountWithBalancePreCheck)
+              }
+            >
+              <Text>Create acc (w/USDCBalance)</Text>
+            </Button>
+          </View>
+        </Section>
+      ) : (
+        <Section>
+          {totalValue ? (
+            <WalletValue
+              value={totalValue.toFixed(2)}
+              address={account.address}
+            />
+          ) : (
+            <Text>Loading...</Text>
+          )}
+        </Section>
+      )}
+
       <Section>
         <View style={style.actionBar}>
           <View style={{ marginRight: 10 }}>

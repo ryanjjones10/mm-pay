@@ -1,4 +1,5 @@
 import { colors } from '@app/styles/common'
+import { convertToFiat } from '@app/utils'
 import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
@@ -50,7 +51,9 @@ function TokenTable({ tokens }: { tokens: any }) {
                     textAlign: 'right',
                   }}
                 >
-                  {formatCurrency(value?.marketValue)}
+                  {formatCurrency(
+                    convertToFiat(value.marketValue, 1).toNumber(),
+                  )}
                 </Text>
                 <Text
                   style={{
@@ -58,7 +61,7 @@ function TokenTable({ tokens }: { tokens: any }) {
                     textAlign: 'right',
                   }}
                 >
-                  {balance?.toPrecision(6)} {symbol}
+                  {parseFloat(balance?.toPrecision(6))} {symbol}
                 </Text>
               </View>
             </View>

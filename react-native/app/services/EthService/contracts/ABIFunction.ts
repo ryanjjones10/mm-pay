@@ -3,6 +3,7 @@ import BN from 'bn.js'
 import { Buffer } from 'buffer'
 import 'react-native-get-random-values'
 import '@ethersproject/shims'
+
 import { AbiCoder } from '@ethersproject/abi'
 import { keccak256 } from '@ethersproject/keccak256'
 import { toChecksumAddress } from '@ethereumjs/util/dist/account'
@@ -59,6 +60,7 @@ export class AbiFunction {
   public encodeInput = (suppliedInputs: TObject = {}) => {
     const args = this.processSuppliedArgs(suppliedInputs)
     const encodedCall = this.makeEncodedFuncCall(args)
+
     return encodedCall
   }
 
@@ -83,9 +85,8 @@ export class AbiFunction {
 
   public decodeOutput = (argString: string) => {
     const abi = new AbiCoder()
-
     // Remove method selector from data, if present
-    argString = argString.replace(addHexPrefix(this.methodSelector), '')
+    argString = argString.replace(this.methodSelector, '')
 
     // Remove 0x prefix
     argString = argString.replace('0x', '')
@@ -108,7 +109,7 @@ export class AbiFunction {
 
   private getMethodId = (name: string, types: string[]) => {
     const sig = name + '(' + types.map(elementaryName).join(',') + ')'
-    return keccak256(Buffer.from(sig)).slice(0, 4)
+    return keccak256(Buffer.from(sig)).slice(0, 10)
   }
 
   private init(outputMappings: FunctionOutputMappings = []) {
@@ -165,8 +166,9 @@ export class AbiFunction {
 
   private makeEncodedFuncCall = (args: string[]) => {
     const abi = new AbiCoder()
+
     const encodedArgs = abi.encode(this.inputTypes, args)
-    return addHexPrefix(`${this.methodSelector}${encodedArgs}`)
+    return `${this.methodSelector}${stripHexPrefix(encodedArgs)}`
   }
 
   private processSuppliedArgs = (suppliedArgs: ISuppliedArgs) =>

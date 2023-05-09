@@ -62,12 +62,11 @@ const stripRightZeros = (str: string) => {
 }
 
 export const baseToConvertedUnit = (value: string, decimal: number) => {
-  if (decimal === 0) {
-    return value
-  }
+  if (decimal === 0) return value
   const paddedValue = value.padStart(decimal + 1, '0') //0.1 ==>
   const integerPart = paddedValue.slice(0, -decimal)
   const fractionPart = stripRightZeros(paddedValue.slice(-decimal))
+
   return fractionPart ? `${integerPart}.${fractionPart}` : `${integerPart}`
 }
 
@@ -115,7 +114,7 @@ export const getDecimals = (value: string) =>
 const calculateGasUsedPercentage = (gasLimit: string, gasUsed: string) => {
   const gasLimitBN = bigify(gasLimit)
   const gasUsedBN = bigify(gasUsed)
-  return gasUsedBN.View(gasLimitBN).multipliedBy(bigify(100))
+  return gasUsedBN.div(gasLimitBN).multipliedBy(bigify(100))
 }
 
 const gasPriceToBase = (price: string | number) =>
