@@ -44,7 +44,6 @@ function Keypad({ current, onChange }: { current: string; onChange: any }) {
     if (newValue === '') {
       onChange('0')
     }
-    console.debug(`current is ${newValue}, oldValue is ${value}`)
     onChange(newValue)
   }
   return (

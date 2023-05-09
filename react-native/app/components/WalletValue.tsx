@@ -1,15 +1,16 @@
-import { formatCurrency } from '@app/utils/currency'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { colors } from '@app/styles/common'
 import Address from '@app/components/Address'
+import { convertToFiat } from '@app/utils'
+import { formatCurrency } from '@app/utils/currency'
 
 export default function WalletValue({
   address,
   value,
 }: {
   address: string
-  value: number
+  value: string
 }) {
   return (
     <View
@@ -28,7 +29,7 @@ export default function WalletValue({
           fontWeight: '600',
         }}
       >
-        {formatCurrency(value)}
+        {formatCurrency(convertToFiat(value, 1).toNumber())}
       </Text>
     </View>
   )

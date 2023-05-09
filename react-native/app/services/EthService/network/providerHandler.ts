@@ -1,3 +1,7 @@
+import 'react-native-get-random-values'
+
+import '@ethersproject/shims'
+
 import { FeeData } from '@ethersproject/abstract-provider'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
@@ -84,7 +88,10 @@ export class ProviderHandler {
   /* Tested */
   public getTokenBalance(address: string, token: Asset): Promise<string> {
     return this.getRawTokenBalance(address, token).then((balance) =>
-      baseToConvertedUnit(balance, token.decimal ?? DEFAULT_ASSET_DECIMAL),
+      baseToConvertedUnit(
+        balance.toString(),
+        token.decimal ?? DEFAULT_ASSET_DECIMAL,
+      ),
     )
   }
 

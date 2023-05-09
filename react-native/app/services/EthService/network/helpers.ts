@@ -1,3 +1,7 @@
+import 'react-native-get-random-values'
+
+import '@ethersproject/shims'
+
 import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers'
 
 import { Network, NodeOptions } from '@app/types'
