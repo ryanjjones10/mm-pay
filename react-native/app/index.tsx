@@ -18,6 +18,7 @@ import { useAccounts } from './services/AccountStore'
 import Button from './components/ui/Button'
 import {
   LINEA_ETH,
+  LINEA_TESTNET_CHAINID,
   LINEA_USDC,
   testAccountNew,
   testAccountWithBalancePreCheck,
@@ -25,6 +26,7 @@ import {
 import { useDispatch } from './services/Store'
 import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
+import { createRandomWallet } from './utils/createRandom'
 
 const formatTokens = (account: StoreAccount) =>
   [
@@ -104,6 +106,17 @@ const Home = () => {
     /* @todo: remove test accounts */
     dispatch(updateAccount(acc))
   }
+
+  const createNewAccount = () => {
+    const wallet = createRandomWallet()
+    const newAccount = {
+      address: wallet.address,
+      privateKey: wallet.privateKey,
+      chainId: LINEA_TESTNET_CHAINID,
+    }
+    invokeCreateAccount(newAccount)
+  }
+
   return (
     <Main>
       <View style={style.header}>
@@ -130,11 +143,14 @@ const Home = () => {
             >
               <Text>Create acc (w/USDCBalance)</Text>
             </Button>
+            <Button onClick={() => createNewAccount()}>
+              <Text>Create acc (new)</Text>
+            </Button>
           </View>
         </Section>
       ) : (
         <Section>
-          {totalValue ? (
+          {totalValue !== undefined ? (
             <WalletValue
               value={totalValue.toFixed(2)}
               address={account.address}
