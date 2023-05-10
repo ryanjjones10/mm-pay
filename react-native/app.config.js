@@ -7,7 +7,7 @@ module.exports = {
     name: 'mm-pay',
     slug: 'mm-pay',
     extra: {
-      metamask_private_key: process.env.METAMASK_PAY_TEST_PRIVATE_KEY,
+      METAMASK_PAY_TEST_PRIVATE_KEY: process.env.METAMASK_PAY_TEST_PRIVATE_KEY,
     },
   },
 }

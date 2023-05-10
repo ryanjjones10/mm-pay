@@ -22,14 +22,13 @@ import {
   LINEA_USDC,
   testAccountNew,
 } from './constants'
-import { appReset, useDispatch } from './services/Store'
+import { useDispatch } from './services/Store'
 import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 import { importedPrivateKey } from './constants/account'
 import { Wallet } from '@ethersproject/wallet'
 import { IS_DEV } from './config'
-
 
 const formatTokens = (account: StoreAccount) =>
   [
@@ -54,7 +53,7 @@ const formatTokens = (account: StoreAccount) =>
   ].filter((token) => token.balance?.gt(0))
 
 const Home = () => {
-  const { account, updateAccount } = useAccounts()
+  const { account, updateAccount, resetAccount } = useAccounts()
   const dispatch = useDispatch()
 
   const tokens = formatTokens(account)
@@ -125,8 +124,8 @@ const Home = () => {
     invokeCreateAccount(newAccount)
   }
 
-  const resetAppState = () => {
-    dispatch(appReset())
+  const resetAccountState = () => {
+    dispatch(resetAccount())
   }
 
   const createNewAccount = () => {
@@ -183,8 +182,8 @@ const Home = () => {
           {IS_DEV && (
             <Section>
               <View style={style.actionBar}>
-                <Button onClick={() => resetAppState()}>
-                  <Text>Reset AppState</Text>
+                <Button onClick={() => resetAccountState()}>
+                  <Text>Reset Account</Text>
                 </Button>
               </View>
             </Section>
@@ -226,7 +225,7 @@ const Home = () => {
             </View>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
               <View>
-                <Text style={{ color:'#0096FF', fontWeight: '600' }}>
+                <Text style={{ color: '#0096FF', fontWeight: '600' }}>
                   Secure your account
                 </Text>
               </View>

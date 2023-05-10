@@ -10,7 +10,7 @@ interface IRehydrate {
   key: typeof APP_PERSIST_CONFIG.key
   type: typeof REHYDRATE
 }
-
+console.debug('[persistence.slice.ts]', JSON.stringify(accountSlice))
 const persistenceReducer = combineReducers({
   version: () => initialLegacyState.version,
   [accountSlice.name]: accountSlice.reducer,
@@ -27,10 +27,11 @@ export default slice
  * Saga
  */
 export function* persistenceSaga() {
-  yield all([yield takeLatest(REHYDRATE, handleRehydrateSuccess)])
+  yield all([takeLatest(REHYDRATE, handleRehydrateSuccess)])
 }
 
 function* handleRehydrateSuccess(action: IRehydrate) {
+  console.debug(`[handleRehydrateSuccess]: ${JSON.stringify(action)}`)
   if (action.key === APP_PERSIST_CONFIG.key) {
     yield put(startBalancesPolling())
   }

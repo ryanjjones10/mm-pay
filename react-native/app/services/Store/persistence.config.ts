@@ -4,15 +4,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { IS_DEV, appName } from '@app/config'
 import { DataStore } from '@app/types'
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
 
 export const APP_PERSIST_CONFIG: PersistConfig<DataStore> = {
-  version: 6,
+  version: 0,
   key: 'Storage',
   keyPrefix: `${appName}_`,
   storage: AsyncStorage,
-  blacklist: [],
-  transforms: [],
+  stateReconciler: autoMergeLevel2,
   debug: IS_DEV,
+  writeFailHandler: (err) => {
+    console.error(err)
+  },
 }
 
 export const createPersistReducer = (reducer: Reducer<DataStore>) =>

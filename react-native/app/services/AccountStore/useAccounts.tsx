@@ -4,6 +4,7 @@ import {
   getAccount,
   createAccount as createAccountRedux,
   updateAccount as updateAccountRedux,
+  resetAccount as resetAccountRedux,
 } from '@app/services/Store/account.slice'
 import { useDispatch } from '@app/services/Store'
 import { StoreAccount } from '@app/types'
@@ -21,10 +22,13 @@ function useAccounts() {
 
   const updateAccount = (account: StoreAccount) =>
     dispatch(updateAccountRedux(account))
+
+  const resetAccount = () => dispatch(resetAccountRedux())
   return {
     account,
     createAccount,
     updateAccount,
+    resetAccount,
   }
 }
 
