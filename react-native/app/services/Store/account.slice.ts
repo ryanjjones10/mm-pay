@@ -38,7 +38,7 @@ export const {
   reset: resetAccount,
 } = slice.actions
 
-export const accountSlice = slice
+export default slice
 
 /**
  * Selectors
@@ -80,10 +80,8 @@ const balancesPollingPayload: IPollingPayload = {
 // add new field to the StoreAccount type and update the
 export function* fetchBalances() {
   const account: StoreAccount = yield select(getAccount)
-  console.debug(`[fetchBalances]: ${JSON.stringify(account)}`)
   if (isEmpty(account)) return
   const accountsWithBalances: StoreAccount = yield call(getBalances, account)
-  console.debug(`[fetchBalances]: ${JSON.stringify(account)}`)
 
   yield put(updateAccount(accountsWithBalances))
 }

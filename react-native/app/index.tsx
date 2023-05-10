@@ -22,7 +22,7 @@ import {
   LINEA_USDC,
   testAccountNew,
 } from './constants'
-import { appReset, useDispatch } from './services/Store'
+import { useDispatch } from './services/Store'
 import { bigify, isEmpty } from './utils'
 import { StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
