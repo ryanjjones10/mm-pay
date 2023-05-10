@@ -4,11 +4,9 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'
 
 import createStore from './services/Store/store'
-import { persistStore } from 'redux-persist'
 
 const Layout = () => {
-  const { store } = createStore()
-  const persistor = persistStore(store)
+  const { store, persistor } = createStore()
 
   return (
     <Provider store={store}>

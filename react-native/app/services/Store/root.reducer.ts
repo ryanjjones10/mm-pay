@@ -13,24 +13,35 @@ const reducers = combineReducers({
 /**
  * Actions
  */
-export const appReset = createAction(
-  'app/Reset',
-  (newDb = initialLegacyState) => ({
-    payload: newDb,
-  }),
-)
+export const appReset = createAction('app/Reset', () => ({
+  payload: initialLegacyState,
+}))
 
-const rootReducer = (state = undefined, action: AnyAction) => {
+const rootReducer = (
+  state = reducers(undefined, { type: '' }),
+  action: AnyAction,
+) => {
+  console.debug(`[rootReducer]: ${action.type}`, JSON.stringify(action.payload))
   switch (action.type) {
     case appReset.type: {
-      return {
+      const z = {
         ...state,
         [persistenceSlice.name]: {
           ...action.payload,
-          _persist: state.database._persist,
+          ...{ _persist: state.database._persist },
+        },
+      }
+      //dispatch
+      console.debug('z', z)
+      state = {
+        ...state,
+        [persistenceSlice.name]: {
+          ...action.payload,
+          ...{ _persist: state.database._persist },
         },
       }
     }
+
     default: {
       return reducers(state, action)
     }

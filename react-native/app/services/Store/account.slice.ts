@@ -6,10 +6,11 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
+
+import { isEmpty } from '@app/utils'
 import { getAppState } from './selectors'
 import { IPollingPayload, pollingSaga } from '../Polling'
-import { getAccountUSDCBalance, getBalances } from '../BalanceService'
-import { isEmpty } from '@app/utils'
+import { getBalances } from '../BalanceService'
 
 export const initialState = {} as any
 
@@ -37,7 +38,7 @@ export const {
   reset: resetAccount,
 } = slice.actions
 
-export default slice
+export const accountSlice = slice
 
 /**
  * Selectors
@@ -79,9 +80,10 @@ const balancesPollingPayload: IPollingPayload = {
 // add new field to the StoreAccount type and update the
 export function* fetchBalances() {
   const account: StoreAccount = yield select(getAccount)
-
+  console.debug(`[fetchBalances]: ${JSON.stringify(account)}`)
   if (isEmpty(account)) return
   const accountsWithBalances: StoreAccount = yield call(getBalances, account)
+  console.debug(`[fetchBalances]: ${JSON.stringify(account)}`)
 
   yield put(updateAccount(accountsWithBalances))
 }

@@ -4,5 +4,5 @@ import { accountsSaga } from './account.slice'
 import { persistenceSaga } from './persistence.slice'
 
 export default function* rootSaga() {
-  yield all([accountsSaga(), persistenceSaga()])
+  yield all([persistenceSaga(), accountsSaga()])
 }
