@@ -1,4 +1,6 @@
 import React from 'react'
+import './crypt-shim'
+import '@ethersproject/shims'
 import { Stack } from 'expo-router/stack'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'

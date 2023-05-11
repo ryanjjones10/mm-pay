@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js'
+import '@ethersproject/shims'
+import { getAddress } from 'ethers/lib/utils'
 import {
   DEFAULT_ASSET_DECIMAL,
   GAS_LIMIT_LOWER_BOUND,
@@ -13,7 +15,6 @@ import {
   gasStringsToMaxGasBN,
   gasStringsToMaxGasNumber,
 } from '@app/utils'
-import { toChecksumAddress } from '@ethereumjs/util/dist/account'
 
 export const isValidPositiveOrZeroInteger = (
   value: BigNumber | number | string,
@@ -32,7 +33,7 @@ const isInteger = (value: BigNumber | number | string) =>
   bigify(value).isInteger()
 
 export function isChecksumAddress(address: string): boolean {
-  return address === toChecksumAddress(address)
+  return address === getAddress(address)
 }
 
 export function isBurnAddress(address: string): boolean {

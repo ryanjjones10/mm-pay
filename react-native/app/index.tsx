@@ -70,11 +70,13 @@ const Home = () => {
   // handle new claim persistence
   useEffect(() => {
     if (!isEmpty(claim)) return
+
     if (initialUrl) {
       const { queryParams } = Linking.parse(initialUrl)
       if (queryParams && queryParams.token) {
         // extract claim, jsonify it and persist it in store
         const extractedClaim = extractClaim(queryParams.token)
+
         if (!extractedClaim) return
         dispatch(createClaim(extractedClaim))
       }
@@ -191,7 +193,9 @@ const Home = () => {
       </View>
       {!isEmpty(claim) ? (
         <View>
-          <Text>Claim Present ${claim.privateKey.slice(0, 8)}</Text>
+          <Text style={{ marginLeft: 7, color: colors.text }}>
+            Claim Present {claim.privateKey.slice(0, 8)}
+          </Text>
         </View>
       ) : null}
       {isEmpty(account) ? (

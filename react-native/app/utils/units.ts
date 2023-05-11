@@ -1,10 +1,12 @@
 import BigNumber from 'bignumber.js'
+import '@ethersproject/shims'
+import { arrayify } from '@ethersproject/bytes'
+import { Buffer } from 'buffer'
 
 import { DEFAULT_ASSET_DECIMAL } from '@app/config'
 import { BigifySupported, Bigish } from '@app/types'
 
 import { bigify } from './bigify'
-import { toBuffer } from '@ethereumjs/util/dist/bytes'
 import { addHexPrefix } from './addHexPrefix'
 
 type UnitKey = keyof typeof Units
@@ -44,9 +46,9 @@ const handleValues = (input: BigifySupported) => {
   return bigify(input)
 }
 
-const Address = (input: string) => toBuffer(addHexPrefix(input))
+const Address = (input: string) => Buffer.from(arrayify(addHexPrefix(input)))
 
-const Data = (input: string) => toBuffer(addHexPrefix(input))
+const Data = (input: string) => Buffer.from(arrayify(addHexPrefix(input)))
 
 const Nonce = (input: string | BigNumber) => handleValues(input)
 

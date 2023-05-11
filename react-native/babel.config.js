@@ -7,6 +7,8 @@ module.exports = function (api) {
       'transform-inline-environment-variables',
       '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-private-methods',
       require.resolve('expo-router/babel'),
       [
         'module-resolver',
