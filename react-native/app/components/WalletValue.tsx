@@ -6,10 +6,12 @@ import { convertToFiat } from '@app/utils'
 import { formatCurrency } from '@app/utils/currency'
 
 export default function WalletValue({
-  address,
+  contractAddress,
+  signerAddress,
   value,
 }: {
-  address: string
+  contractAddress?: string
+  signerAddress: string
   value: string
 }) {
   return (
@@ -21,7 +23,26 @@ export default function WalletValue({
         alignItems: 'center',
       }}
     >
-      <Address address={address} isCopyable={true} />
+      {signerAddress ? (
+        <View style={{ flexDirection: 'row' }}>
+          {contractAddress ? (
+            <Text
+              style={{ fontSize: 20, fontWeight: '400', color: colors.text }}
+            >
+              Signer:
+            </Text>
+          ) : null}
+          <Address address={signerAddress} isCopyable={true} />
+        </View>
+      ) : null}
+      {contractAddress ? (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ fontSize: 20, fontWeight: '400', color: colors.text }}>
+            Contract:
+          </Text>
+          <Address address={contractAddress} isCopyable={true} />
+        </View>
+      ) : null}
       <Text
         style={{
           color: colors.text,

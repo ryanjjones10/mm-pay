@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash'
+
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -12,17 +14,12 @@ export const isArray = <T>(value: any): value is Array<T> =>
   Array.isArray(value)
 export const isObject = <T extends object>(value: any): value is T =>
   value != null && !Array.isArray(value) && typeof value === 'object'
-export const isEmpty = <T extends object | any[]>(value: T): value is never => {
-  if (typeof value !== 'object') {
-    return false
-  }
-  return Object.keys(value).length === 0
-}
 
 export const isNil = (val: any) => {
   return val === null || val === undefined
 }
 export const isNotUndefined = (obj: any) => !!obj
+
 export const isNotEmpty = (obj: any) => !isEmpty(obj)
 
 export const EthereumAddressRegex = /^0x[a-fA-F0-9]{40}$/
