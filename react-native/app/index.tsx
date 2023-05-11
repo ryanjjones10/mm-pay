@@ -5,6 +5,7 @@ import '@ethersproject/shims'
 import { Link } from 'expo-router'
 import { Text, Image, View, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { isEmpty } from 'lodash'
 
 import BlockLogo from '@app/assets/blockLogo.png'
 import { Avatar } from '@app/components/ui/Avatar'
@@ -20,11 +21,12 @@ import {
   LINEA_ETH,
   LINEA_TESTNET_CHAINID,
   LINEA_USDC,
-  testAccountNew,
+  contractTestAccountMeta,
+  viewOnlyTestAccountNew,
 } from './constants'
 import { useDispatch } from './services/Store'
-import { bigify, isEmpty } from './utils'
-import { StoreAccount } from './types'
+import { bigify } from './utils'
+import { AccountType, StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 import { importedPrivateKey } from './constants/account'
 import { Wallet } from '@ethersproject/wallet'
@@ -56,7 +58,7 @@ const Home = () => {
   const { account, updateAccount, resetAccount } = useAccounts()
   const dispatch = useDispatch()
 
-  const tokens = formatTokens(account)
+  const tokens = isEmpty(account) ? [] : formatTokens(account as StoreAccount)
   const totalValue = tokens.reduce(
     (acc, cur) => acc + parseFloat(cur.value.marketValue),
     0,
@@ -108,11 +110,23 @@ const Home = () => {
     /* @todo: remove test accounts */
     dispatch(updateAccount(acc))
   }
+  const createTestContractAccountWithPrivateKey = () => {
+    if (!importedPrivateKey || importedPrivateKey === '') {
+      console.error(`No process.env.METAMASK_PAY_TEST_PRIVATE_KEY found'`)
+      return
+    }
+    const wallet = new Wallet(importedPrivateKey)
+    const newAccount = {
+      ...contractTestAccountMeta,
+      address: wallet.address,
+      privateKey: importedPrivateKey,
+    }
+    invokeCreateAccount(newAccount)
+  }
 
   const createTestAccountWithPrivateKey = () => {
-    console.debug('createTestAccountWithPrivateKey invoked')
     if (!importedPrivateKey || importedPrivateKey === '') {
-      console.error('No process.env.METAMASK_PAY_TEST_PRIVATE_KEY found')
+      console.error(`No process.env.METAMASK_PAY_TEST_PRIVATE_KEY found'`)
       return
     }
     const wallet = new Wallet(importedPrivateKey)
@@ -120,6 +134,7 @@ const Home = () => {
       address: wallet.address,
       privateKey: importedPrivateKey,
       chainId: LINEA_TESTNET_CHAINID,
+      type: AccountType.EOA,
     }
     invokeCreateAccount(newAccount)
   }
@@ -133,6 +148,7 @@ const Home = () => {
     const newAccount = {
       address: wallet.address,
       privateKey: wallet.privateKey,
+      type: AccountType.EOA,
       chainId: LINEA_TESTNET_CHAINID,
     }
     invokeCreateAccount(newAccount)
@@ -152,26 +168,42 @@ const Home = () => {
         </View>
       </View>
       {isEmpty(account) ? (
-        <Section>
-          <View style={style.actionBar}>
-            <Button onClick={() => invokeCreateAccount(testAccountNew)}>
-              <Text>Create acc (test)</Text>
-            </Button>
-            <Button onClick={() => createTestAccountWithPrivateKey()}>
-              <Text>Create acc (w/private key)</Text>
-            </Button>
-            <Button onClick={() => createNewAccount()}>
-              <Text>Create acc (generate new keypair)</Text>
-            </Button>
-          </View>
-        </Section>
+        <View>
+          <Section>
+            <View style={style.actionBar}>
+              <Button
+                onClick={() => invokeCreateAccount(viewOnlyTestAccountNew)}
+              >
+                <Text>Create acc (test)</Text>
+              </Button>
+              <Button onClick={() => createTestAccountWithPrivateKey()}>
+                <Text>Create acc (w/private key)</Text>
+              </Button>
+            </View>
+          </Section>
+          <Section>
+            <View style={style.actionBar}>
+              <Button onClick={() => createTestContractAccountWithPrivateKey()}>
+                <Text>Create acc (contract acc w/priv key)</Text>
+              </Button>
+              <Button onClick={() => createNewAccount()}>
+                <Text>Create acc (generate new keypair)</Text>
+              </Button>
+            </View>
+          </Section>
+        </View>
       ) : (
         <View>
           <Section>
             {totalValue !== undefined ? (
               <WalletValue
                 value={totalValue.toFixed(2)}
-                address={account.address}
+                contractAddress={
+                  account.type === AccountType.CONTRACT
+                    ? account.contractAddress
+                    : undefined
+                }
+                signerAddress={account.address}
               />
             ) : (
               <View>
@@ -188,35 +220,40 @@ const Home = () => {
               </View>
             </Section>
           )}
+          <Section>
+            <View style={style.actionBar}>
+              <View style={{ marginRight: 10 }}>
+                <Link href="/receive">
+                  <View style={style.secondaryButton}>
+                    <Icon
+                      name="qrcode"
+                      size={15}
+                      style={{ color: colors.primaryBrand }}
+                    />
+                    <Text style={{ marginLeft: 7, color: colors.primaryBrand }}>
+                      Receive
+                    </Text>
+                  </View>
+                </Link>
+              </View>
+              <View style={{ marginLeft: 10 }}>
+                <Link href="/send">
+                  <View style={style.primaryButton}>
+                    <Icon
+                      name="send"
+                      size={15}
+                      style={{ color: colors.text }}
+                    />
+                    <Text style={{ marginLeft: 7, color: colors.text }}>
+                      Send
+                    </Text>
+                  </View>
+                </Link>
+              </View>
+            </View>
+          </Section>
         </View>
       )}
-
-      <Section>
-        <View style={style.actionBar}>
-          <View style={{ marginRight: 10 }}>
-            <Link href="/receive">
-              <View style={style.secondaryButton}>
-                <Icon
-                  name="qrcode"
-                  size={15}
-                  style={{ color: colors.primaryBrand }}
-                />
-                <Text style={{ marginLeft: 7, color: colors.primaryBrand }}>
-                  Receive
-                </Text>
-              </View>
-            </Link>
-          </View>
-          <View style={{ marginLeft: 10 }}>
-            <Link href="/send">
-              <View style={style.primaryButton}>
-                <Icon name="send" size={15} style={{ color: colors.text }} />
-                <Text style={{ marginLeft: 7, color: colors.text }}>Send</Text>
-              </View>
-            </Link>
-          </View>
-        </View>
-      </Section>
       <Section>
         <Card style={{ backgroundColor: 'rgba(255, 255, 0, 0.15)' }}>
           <View>

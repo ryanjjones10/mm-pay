@@ -7,7 +7,7 @@ import {
 } from '@reduxjs/toolkit'
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 
-import { isEmpty } from '@app/utils'
+import { isEmpty } from 'lodash'
 import { getAppState } from './selectors'
 import { IPollingPayload, pollingSaga } from '../Polling'
 import { getBalances } from '../BalanceService'

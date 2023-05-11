@@ -1,8 +1,8 @@
-import { DataStore, LocalStoreKeys } from '@app/types'
+import { DataStore, LocalStoreKeys, StoreAccount } from '@app/types'
 
 export const emptyState: DataStore = {
   version: '0', // @todo: update to updatable version if necessary far in future.
-  [LocalStoreKeys.ACCOUNTS]: {},
+  [LocalStoreKeys.ACCOUNTS]: {} as StoreAccount,
 }
 
 export const initialLegacyState = emptyState
