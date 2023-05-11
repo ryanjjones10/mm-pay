@@ -12,6 +12,8 @@ import { StoreAccount } from '@app/types'
 export interface IAccountContext {
   account: StoreAccount
   updateAccount(accountData: StoreAccount): void
+  createAccount(accountData: StoreAccount): void
+  resetAccount(): void
 }
 
 function useAccounts() {

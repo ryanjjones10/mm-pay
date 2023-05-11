@@ -1,4 +1,3 @@
-import { Claim, LocalStoreKeys } from '@app/types'
 import {
   createAction,
   createSelector,
@@ -7,6 +6,7 @@ import {
 } from '@reduxjs/toolkit'
 import { all, select, takeLatest } from 'redux-saga/effects'
 
+import { Claim, LocalStoreKeys } from '@app/types'
 import { getAppState } from './selectors'
 
 export const initialState = {} as any
@@ -59,6 +59,8 @@ export function* claimsSaga() {
 export function* handleDoClaim() {
   const claim = yield select(getClaim)
   console.debug(
-    `[handleDoClaim]: do something here with claim ${JSON.stringify(claim)}`,
+    `[handleDoClaim]: @todo: something here with claim ${JSON.stringify(
+      claim,
+    )}`,
   )
 }

@@ -5,7 +5,7 @@ import { all, put, takeLatest } from 'redux-saga/effects'
 import accountSlice, { startBalancesPolling } from './account.slice'
 import { initialLegacyState } from './legacy.initialState'
 import { APP_PERSIST_CONFIG } from './persistence.config'
-import claimsSlice from './claim.slice'
+import claimsSlice from './claims.slice'
 
 interface IRehydrate {
   key: typeof APP_PERSIST_CONFIG.key
