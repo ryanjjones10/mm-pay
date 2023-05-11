@@ -5,6 +5,7 @@ import { all, put, takeLatest } from 'redux-saga/effects'
 import accountSlice, { startBalancesPolling } from './account.slice'
 import { initialLegacyState } from './legacy.initialState'
 import { APP_PERSIST_CONFIG } from './persistence.config'
+import claimsSlice from './claims.slice'
 
 interface IRehydrate {
   key: typeof APP_PERSIST_CONFIG.key
@@ -14,6 +15,7 @@ console.debug('[persistence.slice.ts]', JSON.stringify(accountSlice))
 const persistenceReducer = combineReducers({
   version: () => initialLegacyState.version,
   [accountSlice.name]: accountSlice.reducer,
+  [claimsSlice.name]: claimsSlice.reducer,
 })
 
 const slice = {

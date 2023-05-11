@@ -6,6 +6,8 @@ import { Link } from 'expo-router'
 import { Text, Image, View, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { isEmpty } from 'lodash'
+import * as Linking from 'expo-linking'
+import { Wallet } from '@ethersproject/wallet'
 
 import BlockLogo from '@app/assets/blockLogo.png'
 import { Avatar } from '@app/components/ui/Avatar'
@@ -25,12 +27,15 @@ import {
   viewOnlyTestAccountNew,
 } from './constants'
 import { useDispatch } from './services/Store'
-import { bigify } from './utils'
+import { bigify, extractClaim } from './utils'
 import { AccountType, StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 import { importedPrivateKey } from './constants/account'
-import { Wallet } from '@ethersproject/wallet'
+
 import { IS_DEV } from './config'
+import { useClaims } from './services/ClaimsStore'
+import { useInitialURL } from './services'
+import { useEffect } from 'react'
 
 const formatTokens = (account: StoreAccount) =>
   [
@@ -56,8 +61,25 @@ const formatTokens = (account: StoreAccount) =>
 
 const Home = () => {
   const { account, updateAccount, resetAccount } = useAccounts()
+  const { claim, createClaim } = useClaims()
   const dispatch = useDispatch()
+  const url = Linking.useURL()
 
+  const { url: initialUrl } = useInitialURL()
+  console.debug('[Home]: initialUrl', initialUrl, '____', url)
+  // handle new claim persistence
+  useEffect(() => {
+    if (!isEmpty(claim)) return
+    if (initialUrl) {
+      const { queryParams } = Linking.parse(initialUrl)
+      if (queryParams && queryParams.token) {
+        // extract claim, jsonify it and persist it in store
+        const extractedClaim = extractClaim(queryParams.token)
+        if (!extractedClaim) return
+        dispatch(createClaim(extractedClaim))
+      }
+    }
+  }, [initialUrl])
   const tokens = isEmpty(account) ? [] : formatTokens(account as StoreAccount)
   const totalValue = tokens.reduce(
     (acc, cur) => acc + parseFloat(cur.value.marketValue),
@@ -167,6 +189,11 @@ const Home = () => {
           </Avatar>
         </View>
       </View>
+      {!isEmpty(claim) ? (
+        <View>
+          <Text>Claim Present ${claim.privateKey.slice(0, 8)}</Text>
+        </View>
+      ) : null}
       {isEmpty(account) ? (
         <View>
           <Section>

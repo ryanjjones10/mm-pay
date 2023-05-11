@@ -7,7 +7,6 @@ import createStore from './services/Store/store'
 
 const Layout = () => {
   const { store, persistor } = createStore()
-
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

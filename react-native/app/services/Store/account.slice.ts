@@ -1,4 +1,3 @@
-import { LocalStoreKeys, StoreAccount } from '@app/types'
 import {
   createAction,
   createSelector,
@@ -6,8 +5,10 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { all, call, put, select, takeLatest } from 'redux-saga/effects'
-
 import { isEmpty } from 'lodash'
+
+import { LocalStoreKeys, StoreAccount } from '@app/types'
+
 import { getAppState } from './selectors'
 import { IPollingPayload, pollingSaga } from '../Polling'
 import { getBalances } from '../BalanceService'
@@ -68,10 +69,10 @@ const balancesPollingPayload: IPollingPayload = {
   startAction: startBalancesPolling,
   stopAction: stopBalancesPolling,
   params: {
-    interval: 5 * 1000,
+    interval: 10 * 1000,
     retryOnFailure: true,
-    retries: 3,
-    retryAfter: 3000,
+    retries: 1,
+    retryAfter: 10 * 1000,
   },
   saga: fetchBalances,
 }
