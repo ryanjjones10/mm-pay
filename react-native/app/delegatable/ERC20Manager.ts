@@ -1,16 +1,12 @@
-import { deployments, ethers, network } from 'ethers'
+import { ethers } from 'ethers'
 // import { expect } from 'chai'
 import { Provider } from '@ethersproject/providers'
 import { Contract, ContractFactory, Wallet } from 'ethers'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 // import { time } from '@nomicfoundation/hardhat-network-helpers'
 
-// @ts-ignore
 import { generateUtil } from 'eth-delegatable-utils'
 import { getPrivateKeys } from './getPrivateKeys'
 import { generateDelegation, getDeployedContract } from './utils'
-
-const { getSigners } = ethers
 
 async function getPermitSignature(
   signer: any,
