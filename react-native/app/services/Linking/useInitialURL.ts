@@ -9,7 +9,6 @@ export const useInitialURL = () => {
     const getUrlAsync = async () => {
       // Get the deep link used to open the app
       const initialUrl = await Linking.getInitialURL()
-      console.debug('[useInitialURL]: initialUrl', initialUrl)
       // The setTimeout is just for testing purpose
       setTimeout(() => {
         setUrl(initialUrl)

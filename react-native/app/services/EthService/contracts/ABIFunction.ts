@@ -6,7 +6,7 @@ import '@ethersproject/shims'
 
 import { AbiCoder } from '@ethersproject/abi'
 import { keccak256 } from '@ethersproject/keccak256'
-import { toChecksumAddress } from '@ethereumjs/util/dist/account'
+import { getAddress } from 'ethers/lib/utils'
 
 import { addHexPrefix, stripHexPrefix } from '@app/utils'
 
@@ -127,9 +127,9 @@ export class AbiFunction {
 
   private parsePostDecodedValue = (type: string, value: any) => {
     const valueMapping: ITypeMapping = {
-      address: (val: any) => toChecksumAddress(val.toString(16)),
+      address: (val: any) => getAddress(val.toString(16)),
       'address[]': (val: any) =>
-        val.map((x: any) => toChecksumAddress(x.toString(16))),
+        val.map((x: any) => getAddress(x.toString(16))),
     }
 
     const mapppedType = valueMapping[type]

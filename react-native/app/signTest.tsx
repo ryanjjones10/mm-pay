@@ -124,9 +124,6 @@ export default function SignTest() {
       intention: intention,
       string: intentionString,
     }
-
-    console.log('returnValue', returnValue)
-
     return returnValue
   }
 
@@ -183,9 +180,6 @@ export default function SignTest() {
       intention: intention,
       string: intentionString,
     }
-
-    console.log('returnValue', returnValue)
-
     return returnValue
   }
 
