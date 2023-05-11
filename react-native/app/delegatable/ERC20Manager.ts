@@ -1,11 +1,12 @@
+import { ethers } from 'ethers'
 // import { expect } from 'chai'
 import { Provider } from '@ethersproject/providers'
 import { Contract, ContractFactory, Wallet } from 'ethers'
 // import { time } from '@nomicfoundation/hardhat-network-helpers'
 
+import { generateUtil } from 'eth-delegatable-utils'
 import { getPrivateKeys } from './getPrivateKeys'
 import { generateDelegation, getDeployedContract } from './utils'
-import { delegatableUtils } from '@app/services/Contract/scripts/signTypedData'
 
 async function getPermitSignature(
   signer: any,
@@ -21,44 +22,46 @@ async function getPermitSignature(
     signer.getChainId(),
   ])
 
-  return await delegatableUtils.signTypedDataLocal(
-    {
-      name,
-      version,
-      chainId,
-      verifyingContract: token.address,
-    },
-    {
-      Permit: [
-        {
-          name: 'owner',
-          type: 'address',
-        },
-        {
-          name: 'spender',
-          type: 'address',
-        },
-        {
-          name: 'value',
-          type: 'uint256',
-        },
-        {
-          name: 'nonce',
-          type: 'uint256',
-        },
-        {
-          name: 'deadline',
-          type: 'uint256',
-        },
-      ],
-    },
-    {
-      owner: signer.address,
-      spender,
-      value,
-      nonce,
-      deadline,
-    },
+  return ethers.utils.splitSignature(
+    await signer._signTypedData(
+      {
+        name,
+        version,
+        chainId,
+        verifyingContract: token.address,
+      },
+      {
+        Permit: [
+          {
+            name: 'owner',
+            type: 'address',
+          },
+          {
+            name: 'spender',
+            type: 'address',
+          },
+          {
+            name: 'value',
+            type: 'uint256',
+          },
+          {
+            name: 'nonce',
+            type: 'uint256',
+          },
+          {
+            name: 'deadline',
+            type: 'uint256',
+          },
+        ],
+      },
+      {
+        owner: signer.address,
+        spender,
+        value,
+        nonce,
+        deadline,
+      },
+    ),
   )
 }
 
@@ -302,10 +305,3 @@ describe('ERC20Manager', () => {
     // expect(await erc20PermitToken.balanceOf(wallet1.address)).to.equal(totalApprovedAmount);
   })
 })
-function signTypedDataLocal(
-  arg0: { name: any; version: string; chainId: any; verifyingContract: any },
-  arg1: { Permit: { name: string; type: string }[] },
-  arg2: { owner: any; spender: any; value: any; nonce: any; deadline: any },
-) {
-  throw new Error('Function not implemented.')
-}

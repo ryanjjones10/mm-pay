@@ -8,7 +8,7 @@ export const LINEA_USDC: Asset = {
   decimal: 6,
   networkId: 'linea',
   iconUrl:
-    'https://static.metaswap.codefi.network/api/v1/tokenIcons/1/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
+    'https://static.metafi.codefi.network/api/v1/tokenIcons/1/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
 }
 
 export const LINEA_ETH: Asset = {
@@ -18,6 +18,5 @@ export const LINEA_ETH: Asset = {
   type: 'base',
   decimal: 18,
   networkId: 'linea',
-  iconUrl:
-    'https://token.metaswap.codefi.network/assets/networkLogos/ethereum.svg',
+  iconUrl: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
 }

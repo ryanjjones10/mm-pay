@@ -1,5 +1,6 @@
 module.exports = {
   expo: {
+    scheme: 'acme',
     web: {
       bundler: 'metro',
     },
