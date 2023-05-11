@@ -33,7 +33,7 @@ const types = {
 
 const delegation = {
   delegate: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045', // vitalik.eth
-  authority: '0xA14FA3128b0EFdC3D8E0D3BDD6Cc539081DA17c3',
+  authority: '0x0000000000000000000000000000000000000000000000000000000000000000',
   caveats: [
     {
       // enforcer: '0x29c1412803FDb627938a182053839CBB888435c5',
