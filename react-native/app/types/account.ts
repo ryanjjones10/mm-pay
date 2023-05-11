@@ -6,6 +6,8 @@ export enum AccountType {
   VIEW_ONLY = 'view_only',
 }
 export interface BaseStoreAccount {
+  // display address (is signer's address when privateKey
+  // is present, if no privateKey - it's a view_only account)
   address: TAddress
   chainId: number
 

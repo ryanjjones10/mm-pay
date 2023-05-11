@@ -31,7 +31,6 @@ export function* persistenceSaga() {
 }
 
 function* handleRehydrateSuccess(action: IRehydrate) {
-  console.debug(`[handleRehydrateSuccess]: ${JSON.stringify(action)}`)
   if (action.key === APP_PERSIST_CONFIG.key) {
     yield put(startBalancesPolling())
   }
