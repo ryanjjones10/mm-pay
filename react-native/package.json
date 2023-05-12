@@ -2,7 +2,7 @@
   "name": "mm-pay",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "yarn@3.5.1",
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -112,19 +112,19 @@
     "fs": "react-native-level-fs"
   },
   "browser": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_writable": "readable-stream/writable",
+    "crypto": "react-native-crypto",
+    "fs": "react-native-level-fs",
     "http": "@tradle/react-native-http",
     "https": "https-browserify",
-    "vm": "vm-browserify",
-    "os": "react-native-os",
     "net": "react-native-tcp",
-    "fs": "react-native-level-fs"
+    "os": "react-native-os",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify"
   },
   "overrides": {
     "metro": "^0.76.0",
