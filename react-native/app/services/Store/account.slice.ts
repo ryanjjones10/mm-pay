@@ -144,8 +144,13 @@ export function* fetchBalances() {
 }
 
 export function* pendingTxPolling() {
+  console.debug(`[pendingTxPolling]: started.`)
+
   const pendingTransactions: ExtendedTxResponse[] = yield select(
     selectTxsByStatus(ITxStatus.PENDING),
+  )
+  console.debug(
+    `[pendingTxPolling]: started.${JSON.stringify(pendingTransactions)}`,
   )
   const account: StoreAccount = yield select(getAccount)
   const network = LINEA_NETWORK_CONFIG
@@ -153,6 +158,7 @@ export function* pendingTxPolling() {
   for (const pendingTx of pendingTransactions) {
     // If network is not found in the pendingTransactionObject, we cannot continue.
     if (!network) continue
+    console.debug(`[pendingTxPolling]: started rotation`)
     const provider = new ProviderHandler(network)
 
     // Special notation for calling class functions that reference `this`
@@ -169,7 +175,7 @@ export function* pendingTxPolling() {
         pendingTx.from,
       )
       // If transaction count > pendingTx nonce, then the nonce has been used already
-      // (i.e - tx may have been overwritten somewhere other than mycrypto)
+      // (i.e - tx may have been overwritten somewhere other than in-app)
       if (transactionCount > pendingTx.nonce) {
         yield put(
           removeAccountTx({

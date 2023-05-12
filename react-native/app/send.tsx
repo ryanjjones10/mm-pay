@@ -63,7 +63,11 @@ export const Send = () => {
       console.log('can not sign, this is a view-only account')
       return
     }
-    inviteUser(account.privateKey, sendAmount).then((claim) => {
+    if (account.type === AccountType.EOA) {
+      console.debug('sending is turned off for EOA accounts for hackathon.')
+      return
+    }
+    inviteUser(account, sendAmount).then((claim) => {
       if (!claim || isEmpty(claim)) return
       dispatch(
         createClaim({

@@ -300,8 +300,6 @@ describe('ERC20Manager', () => {
     //   },
     // ]);
 
-    // console.log('tthjth', tx)
-
     // expect(await erc20PermitToken.balanceOf(wallet1.address)).to.equal(totalApprovedAmount);
   })
 })

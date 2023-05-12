@@ -2,7 +2,10 @@ import { combineReducers } from '@reduxjs/toolkit'
 import { REHYDRATE } from 'redux-persist'
 import { all, put, takeLatest } from 'redux-saga/effects'
 
-import accountSlice, { startBalancesPolling } from './account.slice'
+import accountSlice, {
+  startBalancesPolling,
+  startTxPolling,
+} from './account.slice'
 import { initialLegacyState } from './legacy.initialState'
 import { APP_PERSIST_CONFIG } from './persistence.config'
 import claimsSlice from './claims.slice'
@@ -35,5 +38,6 @@ export function* persistenceSaga() {
 function* handleRehydrateSuccess(action: IRehydrate) {
   if (action.key === APP_PERSIST_CONFIG.key) {
     yield put(startBalancesPolling())
+    yield put(startTxPolling())
   }
 }
