@@ -1,4 +1,5 @@
 import { TAddress } from './address'
+import { ExtendedTxResponse } from './transaction'
 
 export enum AccountType {
   EOA = 'eoa',
@@ -10,6 +11,7 @@ export interface BaseStoreAccount {
   // is present, if no privateKey - it's a view_only account)
   address: TAddress
   chainId: number
+  transactions: Record<string, ExtendedTxResponse>
 
   usdcBalance?: string
   usdcRate?: number

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 
 import {
-  getClaim,
+  getClaims,
   createClaim as createClaimRedux,
   updateClaim as updateClaimRedux,
   destroyClaim as destroyClaimRedux,
@@ -10,21 +10,23 @@ import { useDispatch } from '@app/services/Store'
 import { Claim } from '@app/types'
 
 export interface IClaimContext {
-  claim: Claim
+  claims: Claim[]
   createClaim(claim: Claim): void
   updateClaim(claim: Claim): void
 }
 
 function useClaims() {
-  const claim = useSelector(getClaim)
+  const claims = useSelector(getClaims)
   const dispatch = useDispatch()
-  const createClaim = (claim: Claim) => dispatch(createClaimRedux(claim))
+  const createClaim = (claim: Claim) =>
+    dispatch(createClaimRedux({ id: claim.id, claim }))
 
-  const updateClaim = (claim: Claim) => dispatch(updateClaimRedux(claim))
+  const updateClaim = (claim: Claim) =>
+    dispatch(updateClaimRedux({ id: claim.id, claim }))
 
   const destroyClaim = () => dispatch(destroyClaimRedux())
   return {
-    claim,
+    claims,
     createClaim,
     updateClaim,
     destroyClaim,

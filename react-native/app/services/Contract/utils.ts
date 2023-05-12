@@ -4,7 +4,7 @@ import { keccak256 } from '@ethersproject/keccak256'
 import { Wallet } from '@ethersproject/wallet'
 
 import { create2Address, encoder } from './scripts'
-import { Claim, DelegatableContractTypes } from '@app/types'
+import { ClaimObject, DelegatableContractTypes } from '@app/types'
 import {
   Delegatable4337Account__factory,
   DelegatableContractsMap,
@@ -37,7 +37,7 @@ export const generateSmartAccountByteCode = (
 export const sendUSDCToInvitationAddress = async (
   inviteOriginator: Wallet,
   usdcAmtToSend: string,
-  invitation: Claim,
+  invitation: ClaimObject,
 ): Promise<TransactionResponse | undefined> => {
   // 3. user 1 sends USDC to smart contract wallet 1’s contract address (using private key 0 - user 1’s private key with eth/usdc on it.)
   const transferData = encodeTransfer(
@@ -69,7 +69,7 @@ export const inviteUser = async (
   existingPrivateKey: string,
   usdcAmt: string,
   network = LINEA_NETWORK_CONFIG,
-): Promise<Claim | undefined> => {
+): Promise<ClaimObject | undefined> => {
   const claim = createInviteLink()
   new ProviderHandler(LINEA_NETWORK_CONFIG, true)
   const existingWallet = new Wallet(
@@ -87,7 +87,7 @@ export const inviteUser = async (
     })
 }
 
-export const createInviteLink = (): Claim => {
+export const createInviteLink = (): ClaimObject => {
   const SmartAccountFactory = new Delegatable4337Account__factory()
 
   //   const PurposeFactory = new Purpose__factory()

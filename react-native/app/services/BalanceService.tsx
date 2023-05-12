@@ -7,7 +7,7 @@ import {
 import { ProviderHandler } from './EthService'
 import { StoreAccount } from '@app/types'
 
-// TODO: This is a hack to get the USDC balance for the account
+// @todo: This is a hack to get the USDC balance for the account
 export const getAccountUSDCBalance = async (
   provider: ProviderHandler,
   account: StoreAccount,

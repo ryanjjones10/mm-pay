@@ -8,7 +8,7 @@ import { TAddress } from './address'
 import { Asset } from './asset'
 import { DistributiveOmit } from './omit'
 import { ITxStatus, ITxType } from './transactionFlow'
-import { TUuid } from './uuid'
+import { TransactionResponse } from '@ethersproject/providers'
 
 // By only dealing with Buffers / BN, dont have to mess around with cleaning strings
 export interface ITransaction {
@@ -74,7 +74,7 @@ export interface ITxType2Receipt extends IBaseTxReceipt {
 export type ITxReceipt = ILegacyTxReceipt | ITxType2Receipt
 
 export interface ITxMetadata {
-  receivingAsset?: TUuid
+  type: ITxType
 }
 
 export type IPendingTxReceipt = DistributiveOmit<ITxReceipt, 'status'> & {
@@ -92,4 +92,9 @@ export type IFinishedTxReceipt = DistributiveOmit<
   status: ITxStatus.SUCCESS | ITxStatus.FAILED
   timestamp: number
   blockNumber: number
+}
+
+export interface ExtendedTxResponse extends TransactionResponse {
+  txType: ITxType
+  txStatus: ITxStatus
 }

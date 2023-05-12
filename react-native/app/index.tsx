@@ -17,6 +17,8 @@ import Card from '@app/components/ui/Card'
 import Section from '@app/components/ui/Section'
 import TokenTable from '@app/components/TokenTable'
 import { Main } from '@app/components/layout/Main'
+import { generateUUID } from '@app/utils'
+
 import { useAccounts } from './services/AccountStore'
 import Button from './components/ui/Button'
 import {
@@ -28,7 +30,7 @@ import {
 } from './constants'
 import { useDispatch } from './services/Store'
 import { bigify, extractClaim } from './utils'
-import { AccountType, StoreAccount } from './types'
+import { AccountType, ClaimTo, StoreAccount } from './types'
 import { createRandomWallet } from './utils/createRandom'
 import { importedPrivateKey } from './constants/account'
 
@@ -61,7 +63,7 @@ const formatTokens = (account: StoreAccount) =>
 
 const Home = () => {
   const { account, updateAccount, resetAccount } = useAccounts()
-  const { claim, createClaim } = useClaims()
+  const { claims, createClaim } = useClaims()
   const dispatch = useDispatch()
   const url = Linking.useURL()
 
@@ -69,16 +71,28 @@ const Home = () => {
   console.debug('[Home]: initialUrl', initialUrl, '____', url)
   // handle new claim persistence
   useEffect(() => {
-    if (!isEmpty(claim)) return
-
     if (initialUrl) {
       const { queryParams } = Linking.parse(initialUrl)
       if (queryParams && queryParams.token) {
         // extract claim, jsonify it and persist it in store
         const extractedClaim = extractClaim(queryParams.token)
-
-        if (!extractedClaim) return
-        dispatch(createClaim(extractedClaim))
+        // don't re-add existing claims
+        if (
+          !extractedClaim ||
+          claims.find(
+            ({ id }) => id === generateUUID(extractedClaim.privateKey),
+          )
+        ) {
+          return
+        }
+        dispatch(
+          createClaim({
+            data: extractedClaim,
+            to: ClaimTo.ME,
+            used: false,
+            id: generateUUID(extractedClaim.privateKey),
+          }),
+        )
       }
     }
   }, [initialUrl])
@@ -191,10 +205,10 @@ const Home = () => {
           </Avatar>
         </View>
       </View>
-      {!isEmpty(claim) ? (
+      {claims.length !== 0 ? (
         <View>
           <Text style={{ marginLeft: 7, color: colors.text }}>
-            Claim Present {claim.privateKey.slice(0, 8)}
+            {claims.length} Claims Present
           </Text>
         </View>
       ) : null}

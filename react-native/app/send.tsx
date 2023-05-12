@@ -8,17 +8,22 @@ import { Main } from '@app/components/layout/Main'
 import { useAccounts } from '@app/services/AccountStore'
 import { button, colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
-import { inviteUser } from './services'
-import { AccountType, Claim } from './types'
-import { isNotEmpty } from './utils'
+import { inviteUser, useDispatch } from './services'
+import { AccountType, ClaimObject, ClaimTo } from './types'
+import { generateUUID, isNotEmpty } from './utils'
 import Section from './components/ui/Section'
 import { b64Encode } from './utils/claim'
 import QRCode from 'react-qr-code'
 import Card from './components/ui/Card'
+import { useClaims } from './services/ClaimsStore'
 
 export const Send = () => {
   const { account } = useAccounts()
-  const [claimToSend, setClaimToSend] = useState(undefined as Claim | undefined)
+  const { createClaim } = useClaims()
+  const dispatch = useDispatch()
+  const [claimToSend, setClaimToSend] = useState(
+    undefined as ClaimObject | undefined,
+  )
 
   const [sendAmount, setSendAmount] = useState('0')
 
@@ -36,6 +41,14 @@ export const Send = () => {
     }
     inviteUser(account.privateKey, sendAmount).then((claim) => {
       if (!claim || isEmpty(claim)) return
+      dispatch(
+        createClaim({
+          id: generateUUID(claim.privateKey),
+          data: claim,
+          used: false,
+          to: ClaimTo.OTHER,
+        }),
+      )
       setClaimToSend(claim)
     })
   }

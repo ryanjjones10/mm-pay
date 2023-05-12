@@ -7,7 +7,7 @@ import {
   resetAccount as resetAccountRedux,
 } from '@app/services/Store/account.slice'
 import { useDispatch } from '@app/services/Store'
-import { StoreAccount } from '@app/types'
+import { ExtendedTxResponse, StoreAccount } from '@app/types'
 
 export interface IAccountContext {
   account: StoreAccount
@@ -25,10 +25,22 @@ function useAccounts() {
   const updateAccount = (account: StoreAccount) =>
     dispatch(updateAccountRedux(account))
 
+  const addTxToAccount = (account: StoreAccount, tx: ExtendedTxResponse) =>
+    dispatch(
+      updateAccountRedux({
+        ...account,
+        transactions: {
+          ...account.transactions,
+          [tx.hash]: { ...account.transactions[tx.hash], ...tx },
+        },
+      }),
+    )
+
   const resetAccount = () => dispatch(resetAccountRedux())
   return {
     account,
     createAccount,
+    addTxToAccount,
     updateAccount,
     resetAccount,
   }

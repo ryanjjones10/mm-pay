@@ -67,7 +67,8 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "redux-saga": "^1.2.3",
-    "stream-browserify": "^3.0.0"
+    "stream-browserify": "^3.0.0",
+    "uuid-by-string": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",

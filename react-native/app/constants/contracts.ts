@@ -1,24 +1,11 @@
 import { DelegatableContractTypes } from '@app/types'
 
 export const DelegatableContractsMap = {
-  [DelegatableContractTypes.SmartAccountFactory]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.SmartAccount]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
+  //  [DelegatableContractTypes.SmartAccountFactory]: '',
   [DelegatableContractTypes.DelegatooorFactory]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.Delegatooor]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
+    '0x061fCeA30C03D807Aa961149D8f6Cfdf855a20D5',
   [DelegatableContractTypes.Purpose]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.PurposeFactory]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
+    '0x6537C590Dd19d2B1bE9B214bEaB9dc449d25E8cb',
   [DelegatableContractTypes.Entrypoint]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.EntryPointFactory]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.SimpleWallet]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
-  [DelegatableContractTypes.SimpleWalletFactory]:
-    '0x22B7922dEA4816799380B78944d45669a37f4e98',
+    '0x8A43d5a32360FAdb31C90e24D2984530A84D6e01',
 }
