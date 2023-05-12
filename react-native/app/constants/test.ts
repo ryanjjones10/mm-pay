@@ -33,6 +33,7 @@ export const viewOnlyTestAccountNew: ViewOnlyStoreAccount = {
   usdcRate: testUSDCRate,
   nativeBalance: testNativeBal,
   nativeRate: testNativeRate,
+  transactions: [],
 }
 
 export const contractTestAccountMeta: Omit<
@@ -46,10 +47,12 @@ export const contractTestAccountMeta: Omit<
   usdcRate: testUSDCRate,
   nativeBalance: '0',
   nativeRate: testNativeRate,
+  transactions: [],
 }
 
 export const viewOnlyTestAccountPreCheck: ViewOnlyStoreAccount = {
   address: testAddr as TAddress,
   chainId: LINEA_TESTNET_CHAINID,
   type: AccountType.VIEW_ONLY,
+  transactions: [],
 }
