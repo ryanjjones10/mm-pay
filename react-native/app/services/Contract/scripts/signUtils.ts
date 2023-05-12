@@ -7,6 +7,8 @@ import {
   recoverPublicKey,
 } from 'ethers/lib/utils'
 import { Wallet } from '@ethersproject/wallet'
+import { ProviderHandler } from '@app/services/EthService'
+import { LINEA_NETWORK_CONFIG } from '@app/constants'
 
 /**
  * Represents the version of `signTypedData` being used.
@@ -463,7 +465,11 @@ export async function signTypedData<T extends MessageTypes>({
     data as TypedMessage<T>,
     SignTypedDataVersion.V4,
   )
-  const signer = new Wallet(privateKey)
+  new ProviderHandler(LINEA_NETWORK_CONFIG)
+  const signer = new Wallet(
+    privateKey,
+    ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
+  )
   return await signer.signMessage(messageHash).then((d) => d)
 }
 

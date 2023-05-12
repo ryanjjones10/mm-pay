@@ -16,7 +16,7 @@ import { useAccounts } from '@app/services/AccountStore'
 import { button, colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
 import { inviteUser, useDispatch } from './services'
-import { AccountType, ClaimObject, ClaimTo } from './types'
+import { AccountType, ClaimStruct, ClaimTo } from './types'
 import { generateUUID, isNotEmpty } from './utils'
 import Section from './components/ui/Section'
 import { b64Encode } from './utils/claim'
@@ -30,7 +30,7 @@ export const Send = () => {
   const { createClaim } = useClaims()
   const dispatch = useDispatch()
   const [claimToSend, setClaimToSend] = useState(
-    undefined as ClaimObject | undefined,
+    undefined as ClaimStruct | undefined,
   )
 
   const style = StyleSheet.create({
@@ -100,11 +100,10 @@ export const Send = () => {
                     USDC
                   </Text>
                 </View>
-                <QRCode
-                  value={`exp://192.168.0.17:19000?token=${b64Encode(
-                    JSON.stringify(claimToSend),
-                  )}`}
-                />
+                <Text>
+                  exp://192.168.0.17:19000?token=
+                  {b64Encode(JSON.stringify(claimToSend))}
+                </Text>
               </Card>
             </View>
           ) : (

@@ -1,4 +1,8 @@
 import React from 'react'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+import { Buffer } from 'buffer'
+
+global.Buffer = Buffer
 import './crypt-shim'
 import '@ethersproject/shims'
 import { Stack } from 'expo-router/stack'

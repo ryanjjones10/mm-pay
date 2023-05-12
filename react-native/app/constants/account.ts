@@ -2,6 +2,9 @@
 
 import Constants from 'expo-constants'
 
+export const pimlicoAPIKey =
+  process.env.PIMLICO_API_KEY || Constants.expoConfig.extra?.pimlicoAPIKey
+
 export const importedPrivateKey =
   process.env.METAMASK_PAY_TEST_PRIVATE_KEY ||
   Constants.expoConfig.extra?.metamaskPayTestPrivateKey

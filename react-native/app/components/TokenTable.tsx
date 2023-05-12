@@ -30,19 +30,10 @@ function TokenTable({ tokens }: { tokens: any }) {
                 alignItems: 'center',
               }}
             >
-              {iconUrl.includes('svg') ? (
-                <SvgUri
-                  uri={iconUrl}
-                  style={{ marginRight: 10 }}
-                  height={32}
-                  width={32}
-                />
-              ) : (
-                <Image
-                  source={{ uri: iconUrl }}
-                  style={{ height: 32, width: 32, marginRight: 10 }}
-                />
-              )}
+              <Image
+                source={{ uri: iconUrl }}
+                style={{ height: 32, width: 32, marginRight: 10 }}
+              />
               <View>
                 <View>
                   <Text style={{ fontWeight: '600', color: colors.text }}>

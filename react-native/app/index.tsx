@@ -188,7 +188,7 @@ const Home = () => {
         dispatch(
           updateAccount({
             ...account,
-            contractAddress: account.address,
+            contractAddress: smartContractAcc.address,
             type: AccountType.CONTRACT,
             transactions: {
               ...account.transactions,

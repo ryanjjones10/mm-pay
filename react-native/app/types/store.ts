@@ -9,5 +9,5 @@ export enum LocalStoreKeys {
 export interface DataStore {
   readonly version: string
   readonly [LocalStoreKeys.ACCOUNTS]: StoreAccount
-  readonly [LocalStoreKeys.CLAIMS]: Claim
+  readonly [LocalStoreKeys.CLAIMS]: Record<string, Claim>
 }

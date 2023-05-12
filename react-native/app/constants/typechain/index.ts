@@ -28,7 +28,7 @@ export type { IERC777Recipient } from './IERC777Recipient'
 export type { IERC165 } from './IERC165'
 export type { Delegatable4337Account } from './Delegatable4337Account'
 export type { ERC1271Contract } from './ERC1271Contract'
-//export type { EntryPoint } from "./EntryPoint";
+export type { EntryPoint } from './EntryPoint'
 //export type { SimpleAccount } from "./SimpleAccount";
 export type { SimpleMultisig } from './SimpleMultisig'
 export type { CanDelegate } from './CanDelegate'
@@ -95,7 +95,7 @@ export { IERC777Recipient__factory } from './factories/IERC777Recipient__factory
 export { IERC165__factory } from './factories/IERC165__factory'
 export { Delegatable4337Account__factory } from './factories/Delegatable4337Account__factory'
 export { ERC1271Contract__factory } from './factories/ERC1271Contract__factory'
-//export { EntryPoint__factory } from "./factories/EntryPoint__factory";
+export { EntryPoint__factory } from './factories/EntryPoint__factory'
 //export { SimpleAccount__factory } from "./factories/SimpleAccount__factory";
 export { SimpleMultisig__factory } from './factories/SimpleMultisig__factory'
 export { CanDelegate__factory } from './factories/CanDelegate__factory'

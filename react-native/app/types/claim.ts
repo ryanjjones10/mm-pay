@@ -1,25 +1,28 @@
+import { UserOpStruct } from '@app/services/Contract/scripts/runOp'
+
 export enum ClaimTo {
   ME = 1,
   OTHER = 2,
 }
 
-export interface ClaimObject {
+export interface ClaimStruct {
   contractAddress: string
   privateKey: string
+  userOps: UserOpStruct[]
 }
 
 export interface OthersInvites {
   id: string
   to: ClaimTo.OTHER
   used: boolean
-  data: ClaimObject
+  data: ClaimStruct
 }
 
 export interface MyInvitations {
   id: string
   to: ClaimTo.ME
   used: boolean
-  data: ClaimObject
+  data: ClaimStruct
 }
 
 export type Claim = OthersInvites | MyInvitations
