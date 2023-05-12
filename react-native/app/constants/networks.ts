@@ -1,6 +1,6 @@
 import { GAS_PRICE_DEFAULT } from '@app/config'
 import { Network, NodeType, TTicker } from '@app/types'
-import { makeExplorer } from '@app/utils'
+import { makeExplorer } from '@app/utils/makeParams'
 import { LINEA_ETH, LINEA_USDC } from './assets'
 
 export const LINEA_TESTNET_CHAINID = 59140

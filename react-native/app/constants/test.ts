@@ -1,11 +1,11 @@
 import {
   AccountType,
   ContractStoreAccount,
-  TAddress,
   ViewOnlyStoreAccount,
 } from '@app/types'
 import { LINEA_TESTNET_CHAINID } from './networks'
 import { b64Encode } from '@app/utils/claim'
+import { generateUUID } from '@app/utils/generateUUID'
 
 export const testUSDCBal = '1234.5678'
 export const testNativeBal = '1.01'
@@ -28,7 +28,7 @@ export const testClaim = b64Encode(
 export const testContactName = 'tester'
 
 export const viewOnlyTestAccountNew: ViewOnlyStoreAccount = {
-  address: testAddr as TAddress,
+  address: testAddr,
   chainId: LINEA_TESTNET_CHAINID,
   type: AccountType.VIEW_ONLY,
   usdcBalance: testUSDCBal,
@@ -42,7 +42,7 @@ export const contractTestAccountMeta: Omit<
   ContractStoreAccount,
   'privateKey' | 'address'
 > = {
-  contractAddress: testAddr as TAddress,
+  contractAddress: testAddr,
   chainId: LINEA_TESTNET_CHAINID,
   type: AccountType.CONTRACT,
   usdcBalance: '0',
@@ -53,8 +53,11 @@ export const contractTestAccountMeta: Omit<
 }
 
 export const viewOnlyTestAccountPreCheck: ViewOnlyStoreAccount = {
-  address: testAddr as TAddress,
+  address: testAddr,
   chainId: LINEA_TESTNET_CHAINID,
   type: AccountType.VIEW_ONLY,
   transactions: {},
 }
+
+export const testUUID = generateUUID('testtesttest')
+console.debug(testUUID)

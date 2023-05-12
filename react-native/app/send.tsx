@@ -19,11 +19,11 @@ import { inviteUser, useDispatch } from './services'
 import { AccountType, ClaimStruct, ClaimTo } from './types'
 import { generateUUID, isNotEmpty } from './utils'
 import Section from './components/ui/Section'
-import { b64Encode } from './utils/claim'
-import QRCode from 'react-qr-code'
 import Card from './components/ui/Card'
 import { useClaims } from './services/ClaimsStore'
-import { LINEA_USDC } from './constants'
+import { LINEA_USDC, testUUID } from './constants'
+import QRCode from 'react-qr-code'
+import { b64Encode } from './utils/claim'
 
 export const Send = () => {
   const { account } = useAccounts()
@@ -32,6 +32,7 @@ export const Send = () => {
   const [claimToSend, setClaimToSend] = useState(
     undefined as ClaimStruct | undefined,
   )
+  const [error, setError] = useState(undefined as Error | undefined)
 
   const style = StyleSheet.create({
     secondaryButton: {
@@ -67,8 +68,12 @@ export const Send = () => {
       console.debug('sending is turned off for EOA accounts for hackathon.')
       return
     }
-    inviteUser(account, sendAmount).then((claim) => {
-      if (!claim || isEmpty(claim)) return
+    inviteUser(account, sendAmount).then((d) => {
+      const { claim, error } = d
+      if (!claim || isEmpty(claim) || error) {
+        setError(error)
+        return
+      }
       dispatch(
         createClaim({
           id: generateUUID(claim.privateKey),
@@ -96,17 +101,29 @@ export const Send = () => {
               >
                 <View style={{ marginBottom: 20 }}>
                   <Text style={{ marginBottom: 20, color: colors.text }}>
-                    Have your friend scan this QR code to claim {sendAmount}{' '}
-                    USDC
+                    Send you friend this link to claim {sendAmount} USDC
                   </Text>
                 </View>
-                <Text>
-                  exp://192.168.0.17:19000?token=
-                  {b64Encode(JSON.stringify(claimToSend))}
+                <Text style={{ color: colors.text }}>
+                  exp://192.168.0.17:19000?token={b64Encode(testUUID)}
                 </Text>
+                <View
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: colors.white,
+                    padding: 20,
+                  }}
+                >
+                  <QRCode
+                    value={`exp://192.168.0.17:19000?token=${b64Encode(
+                      testUUID,
+                    )}`}
+                  />
+                </View>
               </Card>
             </View>
-          ) : (
+          ) : null}
+          {!claimToSend ? (
             <KeyboardAvoidingView>
               <View style={{ height: '100%', width: '100%' }}>
                 <View
@@ -218,7 +235,21 @@ export const Send = () => {
                 </Pressable>
               </View>
             </KeyboardAvoidingView>
-          )}
+          ) : null}
+          {error ? (
+            <View>
+              <Text
+                style={{
+                  color: 'red',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 20,
+                }}
+              >
+                Error {error.message}
+              </Text>
+            </View>
+          ) : null}
         </View>
       </Section>
     </Main>

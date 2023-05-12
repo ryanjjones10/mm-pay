@@ -5,7 +5,6 @@ import { keccak256 } from '@ethersproject/keccak256'
 import { Wallet } from '@ethersproject/wallet'
 import { ecsign } from 'ethereumjs-util'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ethers } from 'ethers'
 import { arrayify, hexlify, parseEther } from 'ethers/lib/utils'
 import { Buffer } from 'buffer'
 
@@ -42,6 +41,7 @@ import {
   encoder,
   signDelegation,
 } from './scripts'
+import { ethers } from 'ethers'
 
 function signatureToHexString(signature: any) {
   const rHex = signature.r.toString('hex')
@@ -99,7 +99,7 @@ export const sendUSDCToInvitationAddress = async (
 export const inviteUser = async (
   account: ContractStoreAccount,
   usdcAmt: string,
-): Promise<ClaimStruct | undefined> => {
+): Promise<{ claim: ClaimStruct | undefined; error?: Error } | undefined> => {
   const SmartAccountFactory = new Delegatable4337Account__factory()
   new ProviderHandler(LINEA_NETWORK_CONFIG, true)
   const wallet = new Wallet(
@@ -109,9 +109,12 @@ export const inviteUser = async (
   const mySmartAccount = SmartAccountFactory.connect(wallet).attach(
     account.contractAddress,
   )
-  const claim = createInvite(account, mySmartAccount, usdcAmt)
-
-  return claim
+  return createInvite(account, mySmartAccount, usdcAmt)
+    .then((claim) => ({ claim, error: undefined }))
+    .catch((e) => {
+      console.error(`[inviteUser] Error creating invite: ${e}`)
+      return { claim: undefined, error: e }
+    })
 }
 
 export const createInvite = async (
@@ -119,261 +122,268 @@ export const createInvite = async (
   smartAccount: Delegatable4337Account,
   usdcAmt: string,
 ): Promise<ClaimStruct> => {
-  const SmartAccountFactory = new Delegatable4337Account__factory()
-  const DelegatooorFactoryFactory = new DelegatooorFactory__factory()
-  const DelegatooorFactory = DelegatooorFactoryFactory.attach(
-    DelegatableContractsMap[DelegatableContractTypes.DelegatooorFactory],
-  )
-  const EntryPointFactory = new EntryPoint__factory()
-  new ProviderHandler(LINEA_NETWORK_CONFIG, true)
+  try {
+    const SmartAccountFactory = new Delegatable4337Account__factory()
+    const DelegatooorFactoryFactory = new DelegatooorFactory__factory()
+    const DelegatooorFactory = DelegatooorFactoryFactory.attach(
+      DelegatableContractsMap[DelegatableContractTypes.DelegatooorFactory],
+    )
+    const EntryPointFactory = new EntryPoint__factory()
+    new ProviderHandler(LINEA_NETWORK_CONFIG, true)
 
-  const existingWallet = new Wallet(
-    account.privateKey,
-    ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
-  )
-  const EntryPoint = EntryPointFactory.connect(existingWallet).attach(
-    DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
-  )
+    const existingWallet = new Wallet(
+      account.privateKey,
+      ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
+    )
+    const EntryPoint = EntryPointFactory.connect(existingWallet).attach(
+      DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
+    )
 
-  if (shouldPrimeSmartAccount) {
-    const txResponse = await existingWallet.sendTransaction({
-      to: smartAccount.address,
-      value: ethers.utils.parseEther('1'),
-    })
-    console.debug('priming tx: ', txResponse)
-  }
-  //   delegatableUtils = createSigningUtil(eip712domain, DelegatorTypes.types)
+    if (shouldPrimeSmartAccount) {
+      const txResponse = await existingWallet.sendTransaction({
+        to: smartAccount.address,
+        value: ethers.utils.parseEther('1'),
+      })
+      console.debug('priming tx: ', txResponse)
+    }
+    //   delegatableUtils = createSigningUtil(eip712domain, DelegatorTypes.types)
 
-  // 1. user 1 generates a private key 1
-  new ProviderHandler(LINEA_NETWORK_CONFIG, true)
-  const newPrivateKey = mockCreatePrivateKey()
-  const newWallet = new Wallet(
-    newPrivateKey,
-    ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
-  )
+    // 1. user 1 generates a private key 1
+    new ProviderHandler(LINEA_NETWORK_CONFIG, true)
+    const newPrivateKey = mockCreatePrivateKey()
+    const newWallet = new Wallet(
+      newPrivateKey,
+      ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
+    )
 
-  // 2. user 1 simulates deploy of smart contract wallet 1
-  // using private key 1 as the owner with a threshold of 1
-  // to get **create2** address (now called “smart contract
-  // wallet 1’s contract address”)
+    // 2. user 1 simulates deploy of smart contract wallet 1
+    // using private key 1 as the owner with a threshold of 1
+    // to get **create2** address (now called “smart contract
+    // wallet 1’s contract address”)
 
-  // does SmartAccountFactory.bytecode require pre-deployment of this contract?
-  const completeBytecode = generateSmartAccountByteCode(
-    SmartAccountFactory.bytecode,
-    newWallet,
-    newWallet.address,
-  )
-  // @todo: what is the [123] for?
-  const salt = keccak256(defaultAbiCoder.encode(['uint256'], [123]))
-  console.log('salt:', salt)
-  // this is the determined new smart contract address using the newWallet as the signer.
-  const determinedNewSmartAccountAddress = create2Address(
-    DelegatableContractsMap[DelegatableContractTypes.DelegatooorFactory],
-    salt,
-    completeBytecode,
-  )
+    // does SmartAccountFactory.bytecode require pre-deployment of this contract?
+    const completeBytecode = generateSmartAccountByteCode(
+      SmartAccountFactory.bytecode,
+      newWallet,
+      newWallet.address,
+    )
+    // @todo: what is the [123] for?
+    const salt = keccak256(defaultAbiCoder.encode(['uint256'], [123]))
+    console.log('salt:', salt)
+    // this is the determined new smart contract address using the newWallet as the signer.
+    const determinedNewSmartAccountAddress = create2Address(
+      DelegatableContractsMap[DelegatableContractTypes.DelegatooorFactory],
+      salt,
+      completeBytecode,
+    )
 
-  // Set up delegatable utils - FOR USED IN DELEGATING FROM SMART ACCOUNT 1 => COUNTERFACTUAL SMART ACCOUNT 2
-  const eip712domain = {
-    chainId: LINEA_NETWORK_CONFIG.chainId,
-    verifyingContract: smartAccount.address,
-    name: testContactName,
-    version: '1',
-  }
+    // Set up delegatable utils - FOR USED IN DELEGATING FROM SMART ACCOUNT 1 => COUNTERFACTUAL SMART ACCOUNT 2
+    const eip712domain = {
+      chainId: LINEA_NETWORK_CONFIG.chainId,
+      verifyingContract: smartAccount.address,
+      name: testContactName,
+      version: '1',
+    }
 
-  console.log(
-    'determinedNewSmartAccountAddress:',
-    determinedNewSmartAccountAddress,
-  )
-  // Not needed in this iteration
-  //   let sentUSDC = true
-  //   if (sendTransactionsCheck) {
-  //     sentUSDC = await sendUSDCToInvitationAddress(
-  //       existingWallet,
-  //       usdcAmt,
-  //       determinedNewSmartAccountAddress,
-  //     )
-  //       .then((d) => {
-  //         console.log(
-  //           `[sendUSDCToInvitationAddress]: txResponse: ${JSON.stringify(
-  //             d,
-  //             null,
-  //             2,
-  //           )}`,
-  //         )
-  //         return true
-  //       })
-  //       .catch((e) => {
-  //         console.error(
-  //           `[sendUSDCToInvitationAddress] Error sending transaction: ${e}`,
-  //         )
-  //         return false
-  //       })
-  //   }
+    console.log(
+      'determinedNewSmartAccountAddress:',
+      determinedNewSmartAccountAddress,
+    )
+    // Not needed in this iteration
+    let sentUSDC = true
+    if (sendTransactionsCheck) {
+      sentUSDC = await sendUSDCToInvitationAddress(
+        existingWallet,
+        usdcAmt,
+        determinedNewSmartAccountAddress,
+      )
+        .then((d) => {
+          console.log(
+            `[sendUSDCToInvitationAddress]: txResponse: ${JSON.stringify(
+              d,
+              null,
+              2,
+            )}`,
+          )
+          return true
+        })
+        .catch((e) => {
+          console.error(
+            `[sendUSDCToInvitationAddress] Error sending transaction: ${e}`,
+          )
+          return false
+        })
+    }
 
-  // get initcode from delegatooor factory deploy function
-  const initCode =
-    DelegatooorFactory.address +
-    DelegatooorFactory.interface
-      .encodeFunctionData('deploy', [completeBytecode, salt])
-      .slice(2)
-  console.log('initCode:', initCode)
-  // The new CFAccount pays someone else ie SmartAccount2
-  // The new CFAccount has an empty intent
-  const intent = {
-    to: EMPTY_ADDRESS,
-    value: 0,
-    data: '0x',
-  }
-  const replayProtection = {
-    nonce: '0x01',
-    queue: '0x00',
-  }
-  // get the hash that sig will be validated against
-  const delHash = await smartAccount.getDelegatorHash(
-    intent.to,
-    intent.value,
-    intent.data,
-    replayProtection,
-  )
-  console.log('delHash:', delHash)
+    // get initcode from delegatooor factory deploy function
+    const initCode =
+      DelegatooorFactory.address +
+      DelegatooorFactory.interface
+        .encodeFunctionData('deploy', [completeBytecode, salt])
+        .slice(2)
+    console.log('initCode:', initCode)
+    // The new CFAccount pays someone else ie SmartAccount2
+    // The new CFAccount has an empty intent
+    const intent = {
+      to: EMPTY_ADDRESS,
+      value: 0,
+      data: '0x',
+    }
+    const replayProtection = {
+      nonce: '0x01',
+      queue: '0x00',
+    }
+    // get the hash that sig will be validated against
+    const delHash = await smartAccount.getDelegatorHash(
+      intent.to,
+      intent.value,
+      intent.data,
+      replayProtection,
+    )
+    console.log('delHash:', delHash)
 
-  // sign the hash with the new signer - since new signer will be the owner of the new CFAccount
-  const sign = ecsign(
-    Buffer.from(arrayify(delHash)),
-    Buffer.from(arrayify(newPrivateKey)),
-  )
-  const hexsign = '0x' + signatureToHexString(sign)
+    // sign the hash with the new signer - since new signer will be the owner of the new CFAccount
+    const sign = ecsign(
+      Buffer.from(arrayify(delHash)),
+      Buffer.from(arrayify(newPrivateKey)),
+    )
+    const hexsign = '0x' + signatureToHexString(sign)
 
-  const signaturePayload = {
-    signatures: [
+    const signaturePayload = {
+      signatures: [
+        {
+          contractAddress: EMPTY_ADDRESS,
+          signature: hexsign,
+        },
+      ],
+      delegations: [],
+    }
+    const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG)
+    const initialBalance = await provider.getBalance(smartAccount.address)
+    console.log('SmartAccount initial Balance:', initialBalance.toBigInt())
+    // grab the initial balance of CFAccount Delegator for comparison later - Should be 0
+    const initialBalanceCFA = await provider.getBalance(
+      determinedNewSmartAccountAddress,
+    )
+
+    console.log(
+      'CFAccount Delegator initial Balance:',
+      initialBalanceCFA.toBigInt(),
+    )
+
+    // deposit ETH to the EntryPoint on behalf of the new CFAccount
+    if (shouldPrimeEntrypoint) {
+      const dTrx = await EntryPoint.depositTo(
+        determinedNewSmartAccountAddress,
+        {
+          value: parseEther('0.25'),
+        },
+      )
+      console.debug('dTrx sent - ', dTrx)
+      await dTrx.wait(1)
+    }
+    console.debug(
+      'got passed dTrx entrypoint depositTo determinedNewSmartAccountAddress',
+    )
+    // Create the CFAccount initCode UserOperation
+    const userOp1 = await fillUserOp(
       {
-        contractAddress: EMPTY_ADDRESS,
-        signature: hexsign,
+        sender: determinedNewSmartAccountAddress,
+        initCode: initCode,
+        callData: await callData(
+          smartAccount.address,
+          intent.to,
+          intent.value,
+          intent.data,
+          signaturePayload,
+          replayProtection,
+        ), // empty intent just to init new CFAccount
       },
-    ],
-    delegations: [],
-  }
-  const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG)
-  const initialBalance = await provider.getBalance(smartAccount.address)
-  console.log('SmartAccount initial Balance:', initialBalance.toBigInt())
-  // grab the initial balance of CFAccount Delegator for comparison later - Should be 0
-  const initialBalanceCFA = await provider.getBalance(
-    determinedNewSmartAccountAddress,
-  )
+      smartAccount as Delegatable4337Account,
+    )
+    console.debug('userOp1', userOp1)
 
-  console.log(
-    'CFAccount Delegator initial Balance:',
-    initialBalanceCFA.toBigInt(),
-  )
+    // Create the delegation UserOperation
+    // Create Delegation to the new CFAccount on behalf of the SmartAccount
+    const delegation = {
+      delegate: determinedNewSmartAccountAddress,
+      authority:
+        '0x0000000000000000000000000000000000000000000000000000000000000000',
+      caveats: [],
+      salt: 0,
+    }
+    console.debug('delegation', delegation)
 
-  // deposit ETH to the EntryPoint on behalf of the new CFAccount
-  if (shouldPrimeEntrypoint) {
-    const dTrx = await EntryPoint.depositTo(determinedNewSmartAccountAddress, {
-      value: parseEther('0.25'),
-    })
-    console.debug('dTrx sent - ', dTrx)
-    await dTrx.wait(1)
-  }
-  console.debug(
-    'got passed dTrx entrypoint depositTo determinedNewSmartAccountAddress',
-  )
-  // Create the CFAccount initCode UserOperation
-  const userOp1 = await fillUserOp(
-    {
-      sender: determinedNewSmartAccountAddress,
-      initCode: initCode,
-      callData: await callData(
-        smartAccount.address,
-        intent.to,
-        intent.value,
-        intent.data,
-        signaturePayload,
-        replayProtection,
-      ), // empty intent just to init new CFAccount
-    },
-    smartAccount as Delegatable4337Account,
-  )
-  console.debug('userOp1', userOp1)
+    const signedDelegation = await signDelegation(smartAccount)(
+      eip712domain,
+      DelegatorTypes.types,
+    )(delegation, [existingWallet.privateKey])
+    console.debug('signedDelegation', signedDelegation)
 
-  // Create the delegation UserOperation
-  // Create Delegation to the new CFAccount on behalf of the SmartAccount
-  const delegation = {
-    delegate: determinedNewSmartAccountAddress,
-    authority:
-      '0x0000000000000000000000000000000000000000000000000000000000000000',
-    caveats: [],
-    salt: 0,
-  }
-  console.debug('delegation', delegation)
+    // allows the new CFAccount to claim 1 wei from SmartAccount
+    const intent2 = {
+      to: determinedNewSmartAccountAddress,
+      value: 1,
+      data: '0x',
+    }
+    const replayProtection2 = {
+      nonce: '0x01',
+      queue: '0x00',
+    }
+    console.debug('intent - replayprotection2', intent, replayProtection2)
 
-  const signedDelegation = await signDelegation(smartAccount)(
-    eip712domain,
-    DelegatorTypes.types,
-  )(delegation, [existingWallet.privateKey])
-  console.debug('signedDelegation', signedDelegation)
+    const delHash2 = await smartAccount.getDelegatorHash(
+      intent2.to,
+      intent2.value,
+      intent2.data,
+      replayProtection2,
+    )
+    console.debug('delHash2', delHash2)
 
-  // allows the new CFAccount to claim 1 wei from SmartAccount
-  const intent2 = {
-    to: determinedNewSmartAccountAddress,
-    value: 1,
-    data: '0x',
-  }
-  const replayProtection2 = {
-    nonce: '0x01',
-    queue: '0x00',
-  }
-  console.debug('intent - replayprotection2', intent, replayProtection2)
+    const sign2 = ecsign(
+      Buffer.from(arrayify(delHash2)),
+      Buffer.from(arrayify(newPrivateKey)),
+    )
 
-  const delHash2 = await smartAccount.getDelegatorHash(
-    intent2.to,
-    intent2.value,
-    intent2.data,
-    replayProtection2,
-  )
-  console.debug('delHash2', delHash2)
+    console.debug('sign2', sign2)
 
-  const sign2 = ecsign(
-    Buffer.from(arrayify(delHash2)),
-    Buffer.from(arrayify(newPrivateKey)),
-  )
-
-  console.debug('sign2', sign2)
-
-  const hexsign2 = '0x' + signatureToHexString(sign2)
-  console.debug('hexsign2', hexsign2)
-  const signaturePayload2 = {
-    signatures: [
+    const hexsign2 = '0x' + signatureToHexString(sign2)
+    console.debug('hexsign2', hexsign2)
+    const signaturePayload2 = {
+      signatures: [
+        {
+          contractAddress: EMPTY_ADDRESS,
+          signature: hexsign2,
+        },
+      ],
+      delegations: [signedDelegation],
+    }
+    console.debug('signaturePayload2', signaturePayload2)
+    // Create the delegation UserOperation
+    const userOp2 = await fillUserOp(
       {
-        contractAddress: EMPTY_ADDRESS,
-        signature: hexsign2,
+        sender: smartAccount.address,
+        initCode: '0x',
+        callData: await callData(
+          smartAccount.address,
+          intent2.to,
+          intent2.value,
+          intent2.data,
+          signaturePayload2,
+          replayProtection2,
+        ), // sends 1 wei to new CFAccount from SmartAccount
       },
-    ],
-    delegations: [signedDelegation],
-  }
-  console.debug('signaturePayload2', signaturePayload2)
-  // Create the delegation UserOperation
-  const userOp2 = await fillUserOp(
-    {
-      sender: smartAccount.address,
-      initCode: '0x',
-      callData: await callData(
-        smartAccount.address,
-        intent2.to,
-        intent2.value,
-        intent2.data,
-        signaturePayload2,
-        replayProtection2,
-      ), // sends 1 wei to new CFAccount from SmartAccount
-    },
-    smartAccount as Delegatable4337Account,
-  )
-  console.debug('userOp2', userOp2)
+      smartAccount as Delegatable4337Account,
+    )
+    console.debug('userOp2', userOp2)
 
-  return {
-    contractAddress: determinedNewSmartAccountAddress,
-    privateKey: newPrivateKey,
-    userOps: [userOp1, userOp2],
+    return {
+      contractAddress: determinedNewSmartAccountAddress,
+      privateKey: newPrivateKey,
+      userOps: [userOp1, userOp2],
+    }
+  } catch (e) {
+    throw new Error(`ERROR WITH SEND '${e}'`)
   }
   //   const initCode =
   //     DelegatableContractsMap[DelegatableContractTypes.DelegatooorFactory] +
@@ -450,4 +460,44 @@ async function fillUserOp(
   userOp.paymasterAndData = hexlify('0x')
   userOp.signature = hexlify('0x')
   return userOp as UserOpStruct
+}
+
+export const executeUserOps = async (
+  newUserPrivateKey: string,
+  determinedNewSmartAccount: string,
+  userOps: UserOpStruct[],
+) => {
+  const EntryPointFactory = new EntryPoint__factory()
+  new ProviderHandler(LINEA_NETWORK_CONFIG, true)
+  const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG)
+  const newUserWallet = new Wallet(newUserPrivateKey, provider)
+  const EntryPoint = EntryPointFactory.connect(newUserWallet).attach(
+    DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
+  )
+
+  // Execute the UserOperation which will deploy the new CFAccount and send 1 wei from the CFAccount to SmartAccount2
+  const tx = await EntryPoint.handleOps(
+    userOps,
+    await newUserWallet.getAddress(),
+    {
+      gasLimit: 30000000,
+    },
+  )
+  await tx.wait()
+
+  const SmartAccountBalanceAfter = await provider.getBalance(
+    determinedNewSmartAccount,
+  )
+  console.log(
+    'Smart Account Balance After:',
+    SmartAccountBalanceAfter.toBigInt(),
+  )
+  const newCFAccountBalanceAfter = await provider.getBalance(
+    determinedNewSmartAccount,
+  )
+  console.log(
+    'CFAccount Delegator Balance After:',
+    newCFAccountBalanceAfter.toBigInt(),
+  )
+  return true
 }

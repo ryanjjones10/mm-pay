@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+
 import { polyfillWebCrypto } from 'expo-standard-web-crypto'
 polyfillWebCrypto()
 
@@ -37,7 +39,6 @@ import {
   ITxStatus,
   ITxType,
   StoreAccount,
-  TAddress,
 } from './types'
 import { importedPrivateKey } from './constants/account'
 
@@ -46,10 +47,53 @@ import { useClaims } from './services/ClaimsStore'
 import {
   ProviderHandler,
   deployNew4337DelegatableSmartAccount,
+  executeUserOps,
   useInitialURL,
 } from './services'
-import { useEffect } from 'react'
 import TransactionsTable from './components/TransactionsTable'
+
+const style = StyleSheet.create({
+  header: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  brand: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logo: {
+    height: 25,
+    width: 25,
+  },
+  actionBar: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButton: {
+    ...button,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'inherit',
+  },
+  primaryButton: {
+    ...button,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primaryBrand,
+  },
+  cardHeader: {
+    fontSize: 16,
+    color: colors.text,
+    fontWeight: '600',
+  },
+})
 
 const formatTokens = (account: StoreAccount) =>
   [
@@ -74,10 +118,17 @@ const formatTokens = (account: StoreAccount) =>
   ].filter((token) => token.balance?.gt(0))
 
 const Home = () => {
-  const { account, updateAccount, resetAccount } = useAccounts()
+  const {
+    account,
+    addNewUserFromClaim,
+    updateAccount,
+    upgradeAccountToContract,
+    resetAccount,
+  } = useAccounts()
   const { claims, createClaim } = useClaims()
   const dispatch = useDispatch()
   const url = Linking.useURL()
+  const [status, setStatus] = useState('')
 
   const { url: initialUrl } = useInitialURL()
   console.debug('[Home]: initialUrl', initialUrl, '____', url)
@@ -85,26 +136,54 @@ const Home = () => {
   useEffect(() => {
     if (initialUrl) {
       const { queryParams } = Linking.parse(initialUrl)
+
       if (queryParams && queryParams.token) {
         // extract claim, jsonify it and persist it in store
-        const extractedClaim = extractClaim(queryParams.token)
+        const extractedClaim = extractClaim(queryParams.token) // extractClaim(queryParams.token) @todo: change back to extractDirectly instead of mock.
+        console.debug(extractedClaim)
         // don't re-add existing claims
-        if (
-          !extractedClaim ||
-          claims.find(
-            ({ id }) => id === generateUUID(extractedClaim.privateKey),
-          )
-        ) {
+        setStatus(`
+          'going to attempt to add n1',
+          ${!extractedClaim},
+          ${
+            claims.find(
+              ({ id }) => id === generateUUID(extractedClaim.privateKey),
+            )
+              ? isEmpty(
+                  claims.find(
+                    ({ id }) => id === generateUUID(extractedClaim.privateKey),
+                  ),
+                )
+              : undefined
+          }`)
+
+        if (!extractedClaim) {
+          setStatus('going to attempt to add now3')
+
           return
         }
-        dispatch(
+        setStatus('going to attempt to add now2')
+        if (!('privateKey' in account)) {
+          setStatus('going to attempt to add now')
+          addNewUserFromClaim(extractedClaim)(dispatch)
+        } else {
+          if (
+            claims.find(
+              ({ id }) => id === generateUUID(extractedClaim.privateKey),
+            )
+          ) {
+            setStatus('claim already exists')
+            return
+          }
+          setStatus('claim added')
+
           createClaim({
+            id: generateUUID(extractedClaim.privateKey),
             data: extractedClaim,
             to: ClaimTo.ME,
             used: false,
-            id: generateUUID(extractedClaim.privateKey),
-          }),
-        )
+          })
+        }
       }
     }
   }, [initialUrl])
@@ -113,48 +192,6 @@ const Home = () => {
     (acc, cur) => acc + parseFloat(cur.value.marketValue),
     0,
   )
-  const style = StyleSheet.create({
-    header: {
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexDirection: 'row',
-    },
-    brand: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    logo: {
-      height: 25,
-      width: 25,
-    },
-    actionBar: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    secondaryButton: {
-      ...button,
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: 'inherit',
-    },
-    primaryButton: {
-      ...button,
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.primaryBrand,
-    },
-    cardHeader: {
-      fontSize: 16,
-      color: colors.text,
-      fontWeight: '600',
-    },
-  })
 
   const invokeCreateAccount = (acc) => {
     /* @todo: remove test accounts */
@@ -181,30 +218,69 @@ const Home = () => {
         account.privateKey,
         ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
       )
-      deployNew4337DelegatableSmartAccount(wallet).then((smartContractAcc) => {
-        if (!account) {
-          console.error(`[deploySmartAccountWallet]: failed to deploy.`)
-        }
-        dispatch(
-          updateAccount({
-            ...account,
-            contractAddress: smartContractAcc.address,
-            type: AccountType.CONTRACT,
-            transactions: {
-              ...account.transactions,
-              [smartContractAcc.deployTransaction.hash]: {
-                ...account.transactions[
-                  smartContractAcc.deployTransaction.hash
-                ],
-                ...smartContractAcc.deployTransaction,
-                data: '', // remove this to not bloat stored state with contract deployment data
-                txType: ITxType.DEPLOY_SMART_ACCOUNT,
-                txStatus: ITxStatus.PENDING,
-              },
-            },
-          }),
+      // If there is a delegatable claim that can be used to deploy the smart contract, then use the claim.
+      const relevantClaim =
+        claims.length !== 0 &&
+        claims.find(
+          (claim) =>
+            claim.to === ClaimTo.ME &&
+            claim.data.privateKey &&
+            account.privateKey &&
+            claim.data.privateKey === account.privateKey &&
+            !claim.used,
         )
-      })
+      console.debug('relevantClaim', !!relevantClaim, !isEmpty(relevantClaim))
+      if (relevantClaim && !isEmpty(relevantClaim)) {
+        const claimExecuteSuccess = executeUserOps(
+          relevantClaim.data.privateKey,
+          relevantClaim.data.contractAddress,
+          relevantClaim.data.userOps,
+        )
+          .then((d) => {
+            if (d) {
+              console.info(
+                `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
+              )
+              return true
+            }
+          })
+          .catch((e) => {
+            console.error(
+              '[deploySmartAccountWallet]: error deploying smart contract using claim',
+              e,
+            )
+            return false
+          })
+        if (!claimExecuteSuccess) return
+        upgradeAccountToContract(account, relevantClaim)
+      } else {
+        deployNew4337DelegatableSmartAccount(wallet).then(
+          (smartContractAcc) => {
+            if (!account) {
+              console.error(`[deploySmartAccountWallet]: failed to deploy.`)
+            }
+            dispatch(
+              updateAccount({
+                ...account,
+                contractAddress: smartContractAcc.address,
+                type: AccountType.CONTRACT,
+                transactions: {
+                  ...account.transactions,
+                  [smartContractAcc.deployTransaction.hash]: {
+                    ...account.transactions[
+                      smartContractAcc.deployTransaction.hash
+                    ],
+                    ...smartContractAcc.deployTransaction,
+                    data: '', // remove this to not bloat stored state with contract deployment data
+                    txType: ITxType.DEPLOY_SMART_ACCOUNT,
+                    txStatus: ITxStatus.PENDING,
+                  },
+                },
+              }),
+            )
+          },
+        )
+      }
     } else {
       console.error(
         'cant deploy smart contract - it either already exists or there is no signing key.',
@@ -219,7 +295,7 @@ const Home = () => {
     }
     const wallet = new Wallet(importedPrivateKey)
     const newAccount: EOAStoreAccount = {
-      address: wallet.address as TAddress,
+      address: wallet.address,
       privateKey: importedPrivateKey,
       chainId: LINEA_TESTNET_CHAINID,
       type: AccountType.EOA,
@@ -256,12 +332,20 @@ const Home = () => {
           </Avatar>
         </View>
       </View>
+      <View>
+        <Text style={{ color: colors.secondaryText }}>
+          URL: {initialUrl} {initialUrl ?? initialUrl}
+        </Text>
+      </View>
       {claims.length !== 0 ? (
         <View>
           <Text style={{ marginLeft: 7, color: colors.text }}>
             {claims.length} Claims Present
           </Text>
         </View>
+      ) : null}
+      {status ? (
+        <Text style={{ color: colors.secondaryText }}>status: {status}</Text>
       ) : null}
       {isEmpty(account) ? (
         <View>

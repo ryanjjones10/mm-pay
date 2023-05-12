@@ -1,4 +1,3 @@
-import { TAddress } from './address'
 import { ExtendedTxResponse } from './transaction'
 
 export enum AccountType {
@@ -9,7 +8,7 @@ export enum AccountType {
 export interface BaseStoreAccount {
   // display address (is signer's address when privateKey
   // is present, if no privateKey - it's a view_only account)
-  address: TAddress
+  address: string
   chainId: number
   transactions: Record<string, ExtendedTxResponse>
 
