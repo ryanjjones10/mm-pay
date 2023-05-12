@@ -121,14 +121,15 @@ const Home = () => {
   const {
     account,
     addNewUserFromClaim,
+    addTxToAccount,
     updateAccount,
-    upgradeAccountToContract,
     resetAccount,
   } = useAccounts()
   const { claims, createClaim } = useClaims()
   const dispatch = useDispatch()
   const url = Linking.useURL()
   const [status, setStatus] = useState('')
+  const [error, setError] = useState(undefined as undefined | Error)
 
   const { url: initialUrl } = useInitialURL()
   console.debug('[Home]: initialUrl', initialUrl, '____', url)
@@ -142,29 +143,10 @@ const Home = () => {
         const extractedClaim = extractClaim(queryParams.token) // extractClaim(queryParams.token) @todo: change back to extractDirectly instead of mock.
         console.debug(extractedClaim)
         // don't re-add existing claims
-        setStatus(`
-          'going to attempt to add n1',
-          ${!extractedClaim},
-          ${
-            claims.find(
-              ({ id }) => id === generateUUID(extractedClaim.privateKey),
-            )
-              ? isEmpty(
-                  claims.find(
-                    ({ id }) => id === generateUUID(extractedClaim.privateKey),
-                  ),
-                )
-              : undefined
-          }`)
-
         if (!extractedClaim) {
-          setStatus('going to attempt to add now3')
-
           return
         }
-        setStatus('going to attempt to add now2')
         if (!('privateKey' in account)) {
-          setStatus('going to attempt to add now')
           addNewUserFromClaim(extractedClaim)(dispatch)
         } else {
           if (
@@ -230,8 +212,10 @@ const Home = () => {
             !claim.used,
         )
       console.debug('relevantClaim', !!relevantClaim, !isEmpty(relevantClaim))
+      // if user wants to deploy a smart contract account & a claim for delegation
+      // already exists, then use the claim to deploy the smart contract instead of manual contract deployment.
       if (relevantClaim && !isEmpty(relevantClaim)) {
-        const claimExecuteSuccess = executeUserOps(
+        return executeUserOps(
           relevantClaim.data.privateKey,
           relevantClaim.data.contractAddress,
           relevantClaim.data.userOps,
@@ -241,7 +225,10 @@ const Home = () => {
               console.info(
                 `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
               )
-              return true
+              return d
+            } else {
+              setError(new Error('Undefined tx response.'))
+              return undefined
             }
           })
           .catch((e) => {
@@ -249,10 +236,18 @@ const Home = () => {
               '[deploySmartAccountWallet]: error deploying smart contract using claim',
               e,
             )
-            return false
+            setError(e)
+            return undefined
           })
-        if (!claimExecuteSuccess) return
-        upgradeAccountToContract(account, relevantClaim)
+          .then((d) => {
+            if (d) {
+              addTxToAccount(account, {
+                ...d,
+                txStatus: ITxStatus.PENDING,
+                txType: ITxType.DEPLOY_SMART_ACCOUNT,
+              })
+            }
+          })
       } else {
         deployNew4337DelegatableSmartAccount(wallet).then(
           (smartContractAcc) => {
@@ -262,8 +257,8 @@ const Home = () => {
             dispatch(
               updateAccount({
                 ...account,
-                contractAddress: smartContractAcc.address,
-                type: AccountType.CONTRACT,
+                pendingContractAddress: smartContractAcc.address,
+                type: AccountType.EOA,
                 transactions: {
                   ...account.transactions,
                   [smartContractAcc.deployTransaction.hash]: {
@@ -297,6 +292,7 @@ const Home = () => {
     const newAccount: EOAStoreAccount = {
       address: wallet.address,
       privateKey: importedPrivateKey,
+      pendingContractAddress: undefined,
       chainId: LINEA_TESTNET_CHAINID,
       type: AccountType.EOA,
       transactions: {},
@@ -380,6 +376,22 @@ const Home = () => {
                 <Button onClick={() => deploySmartAccountWallet()}>
                   <Text>Deploy Smart Account</Text>
                 </Button>
+              </View>
+            </Section>
+          ) : null}
+          {error ? (
+            <Section>
+              <View>
+                <Text
+                  style={{
+                    color: 'red',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 20,
+                  }}
+                >
+                  Error {error.message}
+                </Text>
               </View>
             </Section>
           ) : null}

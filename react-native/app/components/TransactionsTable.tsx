@@ -9,6 +9,7 @@ import Address from './Address'
 import { ExtendedTxResponse } from '@app/types'
 import { Link } from 'expo-router'
 import { toUppercaseFirst } from '@app/utils/firstUpper'
+import { truncate } from '@app/utils'
 
 function TransactionsTable({
   transactions,
@@ -68,9 +69,12 @@ function TransactionsTable({
                             color: colors.text,
                           }}
                         >
-                          {hash ?? (
-                            <Address address={hash} isCopyable={false} />
-                          )}
+                          {hash ? (
+                            <Address
+                              address={truncate(hash)}
+                              isCopyable={false}
+                            />
+                          ) : null}
                         </Text>
                       </Link>
                     </View>

@@ -8,8 +8,12 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { isEmpty } from 'lodash'
 
 import {
+  AccountType,
+  ContractStoreAccount,
+  EOAStoreAccount,
   ExtendedTxResponse,
   ITxStatus,
+  ITxType,
   LocalStoreKeys,
   StoreAccount,
 } from '@app/types'
@@ -91,11 +95,13 @@ export function* accountsSaga() {
 }
 
 export function* removeAccountTxWorker({
-  payload: { account, txHash },
+  payload: { txHash },
 }: PayloadAction<{
   account: StoreAccount
   txHash: string
 }>) {
+  const account: StoreAccount = yield select(getAccount)
+  if (isEmpty(account)) return
   const newAccountData = {
     ...account,
     transactions: Object.values(account.transactions).reduce((acc, curTx) => {
@@ -153,6 +159,7 @@ export function* pendingTxPolling() {
     `[pendingTxPolling]: started.${JSON.stringify(pendingTransactions)}`,
   )
   const account: StoreAccount = yield select(getAccount)
+  if (account.type === AccountType.VIEW_ONLY) return
   const network = LINEA_NETWORK_CONFIG
 
   for (const pendingTx of pendingTransactions) {
@@ -174,9 +181,14 @@ export function* pendingTxPolling() {
         [provider, provider.getTransactionCount],
         pendingTx.from,
       )
+      console.debug(
+        transactionCount,
+        pendingTx.nonce,
+        transactionCount > pendingTx.nonce,
+      )
       // If transaction count > pendingTx nonce, then the nonce has been used already
       // (i.e - tx may have been overwritten somewhere other than in-app)
-      if (transactionCount > pendingTx.nonce) {
+      if (transactionCount >= pendingTx.nonce) {
         yield put(
           removeAccountTx({
             txHash: pendingTx.hash,
@@ -197,8 +209,40 @@ export function* pendingTxPolling() {
     // txStatus and txTimestamp return undefined on failed lookups.
     if (!txStatus || !txTimestamp) continue
 
+    const isDeploySmartAccount =
+      pendingTx.txType === ITxType.DEPLOY_SMART_ACCOUNT
+
+    const isNowContractAccount =
+      isDeploySmartAccount && account.type === AccountType.EOA
+
+    const deriveContractAddress = (isNowContractAccount, pendingTx) =>
+      isNowContractAccount ? pendingTx.contractAddress : undefined
+
+    const deriveNewPendingContractAddr = (
+      account: EOAStoreAccount | ContractStoreAccount,
+      newAccountType: AccountType,
+    ) => {
+      if (newAccountType == AccountType.EOA) {
+        return account.pendingContractAddress
+      }
+      return undefined
+    }
+
+    const deriveNewAccountType = (
+      isNowContractAccount: boolean,
+      account: EOAStoreAccount | ContractStoreAccount,
+    ) => {
+      return isNowContractAccount ? AccountType.CONTRACT : account.type
+    }
+    const newAccountType = deriveNewAccountType(isNowContractAccount, account)
     const newAccountData = {
       ...account,
+      type: newAccountType,
+      contractAddress: deriveContractAddress(isNowContractAccount, pendingTx),
+      pendingContractAddress: deriveNewPendingContractAddr(
+        account,
+        newAccountType,
+      ),
       transactions: Object.values(account.transactions).reduce((acc, curTx) => {
         if (curTx.hash !== pendingTx.hash) {
           acc[curTx.hash] = curTx

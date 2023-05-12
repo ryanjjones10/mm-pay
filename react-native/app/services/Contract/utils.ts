@@ -466,7 +466,7 @@ export const executeUserOps = async (
   newUserPrivateKey: string,
   determinedNewSmartAccount: string,
   userOps: UserOpStruct[],
-) => {
+): Promise<TransactionResponse | undefined> => {
   const EntryPointFactory = new EntryPoint__factory()
   new ProviderHandler(LINEA_NETWORK_CONFIG, true)
   const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG)
@@ -476,28 +476,12 @@ export const executeUserOps = async (
   )
 
   // Execute the UserOperation which will deploy the new CFAccount and send 1 wei from the CFAccount to SmartAccount2
-  const tx = await EntryPoint.handleOps(
-    userOps,
-    await newUserWallet.getAddress(),
-    {
-      gasLimit: 30000000,
-    },
-  )
-  await tx.wait()
-
-  const SmartAccountBalanceAfter = await provider.getBalance(
-    determinedNewSmartAccount,
-  )
-  console.log(
-    'Smart Account Balance After:',
-    SmartAccountBalanceAfter.toBigInt(),
-  )
-  const newCFAccountBalanceAfter = await provider.getBalance(
-    determinedNewSmartAccount,
-  )
-  console.log(
-    'CFAccount Delegator Balance After:',
-    newCFAccountBalanceAfter.toBigInt(),
-  )
-  return true
+  return EntryPoint.handleOps(userOps, await newUserWallet.getAddress(), {
+    gasLimit: 10000000,
+  })
+    .then((txResponse) => txResponse)
+    .catch((e) => {
+      console.error(`[executeUserOps] Error executing userOps: ${e}`)
+      return undefined
+    })
 }

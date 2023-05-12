@@ -22,11 +22,13 @@ export interface ContractStoreAccount extends BaseStoreAccount {
   privateKey: string // signer address
   contractAddress: string // contract wallet's address
   type: AccountType.CONTRACT
+  pendingContractAddress?: string // future contract address
 }
 
 export interface EOAStoreAccount extends BaseStoreAccount {
   privateKey: string // signer address
   type: AccountType.EOA
+  pendingContractAddress?: string // future contract address
 }
 
 export interface ViewOnlyStoreAccount extends BaseStoreAccount {
