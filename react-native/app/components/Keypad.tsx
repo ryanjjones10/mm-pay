@@ -5,16 +5,29 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 const buttonStyle = StyleSheet.create({
   button: {
-    padding: 25,
+    padding: 3,
     backgroundColor: colors.primaryBackground,
     color: colors.text,
     fontSize: 24,
     border: 'none',
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  buttonText: {
+    color: colors.text,
+    fontWeight: '600',
+    fontSize: 18,
+    textAlign: 'center',
+    alignContent: 'center',
   },
   row: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 25,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 35,
+    paddingRight: 35,
     justifyContent: 'space-between',
     width: '100%',
   },
@@ -50,46 +63,46 @@ function Keypad({ current, onChange }: { current: string; onChange: any }) {
     <View>
       <View style={buttonStyle.row}>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(1)}>
-          <Text style={{ color: colors.text }}>1</Text>
+          <Text style={buttonStyle.buttonText}>1</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(2)}>
-          <Text style={{ color: colors.text }}>2</Text>
+          <Text style={buttonStyle.buttonText}>2</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(3)}>
-          <Text style={{ color: colors.text }}>3</Text>
+          <Text style={buttonStyle.buttonText}>3</Text>
         </Pressable>
       </View>
       <View style={buttonStyle.row}>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(4)}>
-          <Text style={{ color: colors.text }}>4</Text>
+          <Text style={buttonStyle.buttonText}>4</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(5)}>
-          <Text style={{ color: colors.text }}>5</Text>
+          <Text style={buttonStyle.buttonText}>5</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(6)}>
-          <Text style={{ color: colors.text }}>6</Text>
+          <Text style={buttonStyle.buttonText}>6</Text>
         </Pressable>
       </View>
       <View style={buttonStyle.row}>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(7)}>
-          <Text style={{ color: colors.text }}>7</Text>
+          <Text style={buttonStyle.buttonText}>7</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(8)}>
-          <Text style={{ color: colors.text }}>8</Text>
+          <Text style={buttonStyle.buttonText}>8</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(9)}>
-          <Text style={{ color: colors.text }}>9</Text>
+          <Text style={buttonStyle.buttonText}>9</Text>
         </Pressable>
       </View>
       <View style={buttonStyle.row}>
         <Pressable style={buttonStyle.button} onPress={() => handleChange('.')}>
-          <Text style={{ color: colors.text }}>.</Text>
+          <Text style={buttonStyle.buttonText}>.</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(0)}>
-          <Text style={{ color: colors.text }}>0</Text>
+          <Text style={buttonStyle.buttonText}>0</Text>
         </Pressable>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(-1)}>
-          <Icon name="arrow-left" size={20} style={{ color: colors.text }} />
+          <Icon name="arrow-left" size={15} style={buttonStyle.buttonText} />
         </Pressable>
       </View>
     </View>

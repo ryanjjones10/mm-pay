@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { KeyboardAvoidingView, View, Text, Pressable } from 'react-native'
+import {
+  KeyboardAvoidingView,
+  View,
+  Text,
+  Pressable,
+  Image,
+  StyleSheet,
+} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { isEmpty } from 'lodash'
 
@@ -16,6 +23,7 @@ import { b64Encode } from './utils/claim'
 import QRCode from 'react-qr-code'
 import Card from './components/ui/Card'
 import { useClaims } from './services/ClaimsStore'
+import { LINEA_USDC } from './constants'
 
 export const Send = () => {
   const { account } = useAccounts()
@@ -24,6 +32,22 @@ export const Send = () => {
   const [claimToSend, setClaimToSend] = useState(
     undefined as ClaimObject | undefined,
   )
+
+  const style = StyleSheet.create({
+    secondaryButton: {
+      ...button,
+      backgroundColor: colors.secondaryBackground,
+      borderWidth: 0,
+      paddingLeft: 6,
+      paddingRight: 6,
+      paddingTop: 4,
+      paddingBottom: 4,
+      borderRadius: 25,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  })
 
   const [sendAmount, setSendAmount] = useState('0')
 
@@ -56,7 +80,7 @@ export const Send = () => {
   return (
     <Main>
       <Section>
-        <View>
+        <View style={{ height: '100%' }}>
           {claimToSend && isNotEmpty(claimToSend) ? (
             <View>
               <Card
@@ -85,22 +109,66 @@ export const Send = () => {
                 <View
                   style={{
                     display: 'flex',
-                    width: '100%',
-                    padding: 10,
+                    flex: 1,
+                    flexDirection: 'column',
+                    padding: 15,
                     justifyContent: 'center',
                   }}
                 >
-                  <Text
+                  <View
                     style={{
-                      color: colors.text,
-                      fontSize: 30,
-                      textAlign: 'center',
+                      display: 'flex',
+                      width: '100%',
+                      padding: 15,
+                      justifyContent: 'center',
                     }}
                   >
-                    {sendAmount === '0'
-                      ? '$0'
-                      : formatCurrency(parseFloat(sendAmount)).toString()}
-                  </Text>
+                    <Text
+                      style={{
+                        color: colors.text,
+                        fontSize: 34,
+                        textAlign: 'center',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {sendAmount === '0'
+                        ? '$0'
+                        : formatCurrency(parseFloat(sendAmount)).toString()}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <View style={style.secondaryButton}>
+                      <Image
+                        source={{ uri: LINEA_USDC.iconUrl }}
+                        style={{ height: 24, width: 24, marginRight: 7 }}
+                      />
+                      <Text
+                        style={{
+                          fontWeight: '600',
+                          fontSize: 14,
+                          marginRight: 7,
+                          color: colors.text,
+                        }}
+                      >
+                        {LINEA_USDC.ticker ?? 'Unknown Ticker'}
+                      </Text>
+                      <Icon
+                        name="chevron-down"
+                        size={10}
+                        style={{
+                          color: colors.text,
+                          textAlign: 'center',
+                          marginRight: 7,
+                        }}
+                      />
+                    </View>
+                  </View>
                 </View>
                 <View style={{ alignItems: 'baseline' }}>
                   <Keypad current={sendAmount} onChange={handleChange} />
@@ -109,7 +177,7 @@ export const Send = () => {
                   <View
                     style={{
                       width: '100%',
-                      margin: 10,
+                      margin: 15,
                       backgroundColor: colors.primaryBrand,
                       justifyContent: 'center',
                       display: 'flex',
@@ -123,6 +191,7 @@ export const Send = () => {
                       style={{
                         color: colors.text,
                         textAlign: 'center',
+                        marginRight: 7,
                       }}
                     />
                     <Text
@@ -132,7 +201,7 @@ export const Send = () => {
                         textAlign: 'center',
                       }}
                     >
-                      Hold to create link
+                      Click to create link
                     </Text>
                   </View>
                 </Pressable>
