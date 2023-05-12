@@ -170,7 +170,15 @@ export const Send = () => {
                     </View>
                   </View>
                 </View>
-                <View style={{ alignItems: 'baseline' }}>
+                <View
+                  style={{
+                    width: '100%',
+                    alignItems: 'baseline',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    marginBottom: 10,
+                  }}
+                >
                   <Keypad current={sendAmount} onChange={handleChange} />
                 </View>
                 <Pressable onPress={handleCreateClaimLink}>

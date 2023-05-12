@@ -60,7 +60,7 @@ function Keypad({ current, onChange }: { current: string; onChange: any }) {
     onChange(newValue)
   }
   return (
-    <View>
+    <View style={{ width: '100%', maxWidth: 350 }}>
       <View style={buttonStyle.row}>
         <Pressable style={buttonStyle.button} onPress={() => handleChange(1)}>
           <Text style={buttonStyle.buttonText}>1</Text>
