@@ -101,7 +101,7 @@ export const Send = () => {
               >
                 <View style={{ marginBottom: 20 }}>
                   <Text style={{ marginBottom: 20, color: colors.text }}>
-                    Send you friend this link to claim {sendAmount} USDC
+                    Send your friend this link to claim {sendAmount} USDC
                   </Text>
                 </View>
                 <Text style={{ color: colors.text }}>

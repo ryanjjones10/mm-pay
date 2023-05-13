@@ -5,8 +5,12 @@ import {
   Delegatable4337Account,
   Delegatable4337Account__factory,
   DelegatableContractsMap,
+  LINEA_NETWORK_CONFIG,
 } from '@app/constants'
 import { DelegatableContractTypes } from '@app/types'
+import { importedPaymaster } from '@app/constants/account'
+import { ProviderHandler } from '@app/services/EthService'
+import { ethers } from 'ethers'
 
 export const deployNew4337DelegatableSmartAccount = async (
   wallet: Wallet,
@@ -18,7 +22,14 @@ export const deployNew4337DelegatableSmartAccount = async (
       '[deployNewContractWallet] Error getting wallet address for signer',
     )
   }
-  return await SmartAccountFactory.connect(wallet)
+
+  const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG);
+  const paymasterWallet = new ethers.Wallet(
+    importedPaymaster,
+    provider
+  )
+
+  return await SmartAccountFactory.connect(paymasterWallet)
     .deploy(
       DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
       [walletAddr],

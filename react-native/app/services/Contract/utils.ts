@@ -26,7 +26,7 @@ import {
 } from '@app/constants'
 import { ProviderHandler } from '@app/services/EthService'
 import { Address, bigify } from '@app/utils'
-import { mockCreatePrivateKey } from '@app/constants/account'
+import { importedPaymaster, mockCreatePrivateKey } from '@app/constants/account'
 import {
   sendTransactionsCheck,
   shouldPrimeEntrypoint,
@@ -475,8 +475,14 @@ export const executeUserOps = async (
     DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
   )
 
+  //this isn't working right, it's not being paid for by the paymaster
+  const paymasterWallet = new Wallet(
+    importedPaymaster,
+    provider
+  )
+
   // Execute the UserOperation which will deploy the new CFAccount and send 1 wei from the CFAccount to SmartAccount2
-  return EntryPoint.handleOps(userOps, await newUserWallet.getAddress(), {
+  return EntryPoint.handleOps(userOps, await paymasterWallet.getAddress(), {
     gasLimit: 10000000,
   })
     .then((txResponse) => txResponse)

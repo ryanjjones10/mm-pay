@@ -133,6 +133,7 @@ const Home = () => {
 
   const { url: initialUrl } = useInitialURL()
   console.debug('[Home]: initialUrl', initialUrl, '____', url)
+
   // handle new claim persistence
   useEffect(() => {
     if (initialUrl) {
@@ -193,6 +194,57 @@ const Home = () => {
   //     invokeCreateAccount(newAccount)
   //   }
 
+  const claimFunds = () => {
+    console.log('claiming')
+
+    const relevantClaim =
+      claims.length !== 0 &&
+      claims.find(
+        (claim) =>
+          claim.to === ClaimTo.ME &&
+          claim.data.privateKey &&
+          account.privateKey &&
+          claim.data.privateKey === account.privateKey &&
+          !claim.used,
+      )
+
+    if (!relevantClaim || isEmpty(relevantClaim)) return
+
+    return executeUserOps(
+      relevantClaim.data.privateKey,
+      relevantClaim.data.contractAddress,
+      relevantClaim.data.userOps,
+    )
+      .then((d) => {
+        if (d) {
+          console.info(
+            `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
+          )
+          return d
+        } else {
+          setError(new Error('Undefined tx response.'))
+          return undefined
+        }
+      })
+      .catch((e) => {
+        console.error(
+          '[deploySmartAccountWallet]: error deploying smart contract using claim',
+          e,
+        )
+        setError(e)
+        return undefined
+      })
+      .then((d) => {
+        if (d) {
+          addTxToAccount(account, {
+            ...d,
+            txStatus: ITxStatus.PENDING,
+            txType: ITxType.DEPLOY_SMART_ACCOUNT,
+          })
+        }
+      })
+  }
+
   const deploySmartAccountWallet = () => {
     if (account.type == AccountType.EOA) {
       new ProviderHandler(LINEA_NETWORK_CONFIG, true)
@@ -200,82 +252,33 @@ const Home = () => {
         account.privateKey,
         ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
       )
+      console.log('priv', account.privateKey)
       // If there is a delegatable claim that can be used to deploy the smart contract, then use the claim.
-      const relevantClaim =
-        claims.length !== 0 &&
-        claims.find(
-          (claim) =>
-            claim.to === ClaimTo.ME &&
-            claim.data.privateKey &&
-            account.privateKey &&
-            claim.data.privateKey === account.privateKey &&
-            !claim.used,
-        )
-      console.debug('relevantClaim', !!relevantClaim, !isEmpty(relevantClaim))
-      // if user wants to deploy a smart contract account & a claim for delegation
-      // already exists, then use the claim to deploy the smart contract instead of manual contract deployment.
-      if (relevantClaim && !isEmpty(relevantClaim)) {
-        return executeUserOps(
-          relevantClaim.data.privateKey,
-          relevantClaim.data.contractAddress,
-          relevantClaim.data.userOps,
-        )
-          .then((d) => {
-            if (d) {
-              console.info(
-                `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
-              )
-              return d
-            } else {
-              setError(new Error('Undefined tx response.'))
-              return undefined
-            }
-          })
-          .catch((e) => {
-            console.error(
-              '[deploySmartAccountWallet]: error deploying smart contract using claim',
-              e,
-            )
-            setError(e)
-            return undefined
-          })
-          .then((d) => {
-            if (d) {
-              addTxToAccount(account, {
-                ...d,
-                txStatus: ITxStatus.PENDING,
+
+      deployNew4337DelegatableSmartAccount(wallet).then((smartContractAcc) => {
+        if (!account) {
+          console.error(`[deploySmartAccountWallet]: failed to deploy.`)
+        }
+        dispatch(
+          updateAccount({
+            ...account,
+            pendingContractAddress: smartContractAcc.address,
+            type: AccountType.EOA,
+            transactions: {
+              ...account.transactions,
+              [smartContractAcc.deployTransaction.hash]: {
+                ...account.transactions[
+                  smartContractAcc.deployTransaction.hash
+                ],
+                ...smartContractAcc.deployTransaction,
+                data: '', // remove this to not bloat stored state with contract deployment data
                 txType: ITxType.DEPLOY_SMART_ACCOUNT,
-              })
-            }
-          })
-      } else {
-        deployNew4337DelegatableSmartAccount(wallet).then(
-          (smartContractAcc) => {
-            if (!account) {
-              console.error(`[deploySmartAccountWallet]: failed to deploy.`)
-            }
-            dispatch(
-              updateAccount({
-                ...account,
-                pendingContractAddress: smartContractAcc.address,
-                type: AccountType.EOA,
-                transactions: {
-                  ...account.transactions,
-                  [smartContractAcc.deployTransaction.hash]: {
-                    ...account.transactions[
-                      smartContractAcc.deployTransaction.hash
-                    ],
-                    ...smartContractAcc.deployTransaction,
-                    data: '', // remove this to not bloat stored state with contract deployment data
-                    txType: ITxType.DEPLOY_SMART_ACCOUNT,
-                    txStatus: ITxStatus.PENDING,
-                  },
-                },
-              }),
-            )
-          },
+                txStatus: ITxStatus.PENDING,
+              },
+            },
+          }),
         )
-      }
+      })
     } else {
       console.error(
         'cant deploy smart contract - it either already exists or there is no signing key.',
@@ -333,16 +336,16 @@ const Home = () => {
           URL: {initialUrl} {initialUrl ?? initialUrl}
         </Text>
       </View>
-      {claims.length !== 0 ? (
+      {claims.length !== 0 && (
         <View>
           <Text style={{ marginLeft: 7, color: colors.text }}>
             {claims.length} Claims Present
           </Text>
         </View>
-      ) : null}
-      {status ? (
+      )}
+      {status && (
         <Text style={{ color: colors.secondaryText }}>status: {status}</Text>
-      ) : null}
+      )}
       {isEmpty(account) ? (
         <View>
           <Section>
@@ -352,7 +355,7 @@ const Home = () => {
               >
                 <Text>Create acc (test)</Text>
               </Button> */}
-              <Button onClick={() => createTestAccountWithPrivateKey()}>
+              <Button onClick={createTestAccountWithPrivateKey}>
                 <Text>Create acc (w/private key)</Text>
               </Button>
             </View>
@@ -370,16 +373,25 @@ const Home = () => {
         </View>
       ) : (
         <View>
-          {account.type === AccountType.EOA ? (
+          {account.type === AccountType.EOA && claims.length === 0 && (
             <Section>
               <View style={style.actionBar}>
-                <Button onClick={() => deploySmartAccountWallet()}>
+                <Button onClick={deploySmartAccountWallet}>
                   <Text>Deploy Smart Account</Text>
                 </Button>
               </View>
             </Section>
-          ) : null}
-          {error ? (
+          )}
+          {account.type === AccountType.EOA && claims.length !== 0 && (
+            <Section>
+              <View style={style.actionBar}>
+                <Button onClick={claimFunds}>
+                  <Text>Claim my funds</Text>
+                </Button>
+              </View>
+            </Section>
+          )}
+          {error && (
             <Section>
               <View>
                 <Text
@@ -394,7 +406,7 @@ const Home = () => {
                 </Text>
               </View>
             </Section>
-          ) : null}
+          )}
           <Section>
             {totalValue !== undefined ? (
               <WalletValue
@@ -471,7 +483,7 @@ const Home = () => {
           </View>
         </Card>
       </Section>
-      {!isEmpty(account) ? (
+      {!isEmpty(account) && (
         <View>
           <Section>
             <Card>
@@ -483,7 +495,7 @@ const Home = () => {
               </View>
             </Card>
           </Section>
-          {Object.keys(account.transactions).length !== 0 ? (
+          {Object.keys(account.transactions).length !== 0 && (
             <Section>
               <Card>
                 <View>
@@ -496,9 +508,9 @@ const Home = () => {
                 </View>
               </Card>
             </Section>
-          ) : null}
+          )}
         </View>
-      ) : null}
+      )}
     </Main>
   )
 }
