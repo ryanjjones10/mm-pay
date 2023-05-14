@@ -137,40 +137,41 @@ const Home = () => {
 
   // handle new claim persistence
   useEffect(() => {
-    if (initialUrl) {
-      const { queryParams } = Linking.parse(initialUrl)
+    if (!initialUrl) return
 
-      if (queryParams && queryParams.token) {
-        // extract claim, jsonify it and persist it in store
-        const extractedClaim = extractClaim(queryParams.token) // extractClaim(queryParams.token) @todo: change back to extractDirectly instead of mock.
-        console.debug(extractedClaim)
-        // don't re-add existing claims
-        if (!extractedClaim) {
+    const { queryParams } = Linking.parse(initialUrl)
+
+    if (!queryParams?.token) return
+
+    // extract claim, jsonify it and persist it in store
+    extractClaim(queryParams.token).then((extractedClaim) => {
+      console.debug('[extractedClaim]: ', extractedClaim)
+      // don't re-add existing claims
+      if (!extractedClaim) return
+
+      if (!('privateKey' in account)) {
+        addNewUserFromClaim(extractedClaim)(dispatch)
+      } else {
+        if (
+          claims.find(
+            ({ id }) => id === generateUUID(extractedClaim.privateKey),
+          )
+        ) {
+          setStatus('claim already exists')
           return
         }
-        if (!('privateKey' in account)) {
-          addNewUserFromClaim(extractedClaim)(dispatch)
-        } else {
-          if (
-            claims.find(
-              ({ id }) => id === generateUUID(extractedClaim.privateKey),
-            )
-          ) {
-            setStatus('claim already exists')
-            return
-          }
-          setStatus('claim added')
+        setStatus('claim added')
 
-          createClaim({
-            id: generateUUID(extractedClaim.privateKey),
-            data: extractedClaim,
-            to: ClaimTo.ME,
-            used: false,
-          })
-        }
+        createClaim({
+          id: generateUUID(extractedClaim.privateKey),
+          data: extractedClaim,
+          to: ClaimTo.ME,
+          used: false,
+        })
       }
-    }
+    })
   }, [initialUrl])
+
   const tokens = isEmpty(account) ? [] : formatTokens(account as StoreAccount)
   const totalValue = tokens.reduce(
     (acc, cur) => acc + parseFloat(cur.value.marketValue),

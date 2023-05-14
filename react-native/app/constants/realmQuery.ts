@@ -4,10 +4,11 @@ import * as Realm from 'realm-web'
 let collection
 
 connect()
-// .then(() => collection.deleteMany({}))
-// .then(() => addUncompressedToken({ token: 'test test test hello' }))
-// .then((uuid) => getUncompressedToken(uuid))
-// .then(console.log)
+  // .then(() => collection.deleteMany({}))
+  // .then(() => addUncompressedData({ data: 'test testd test hello' }))
+  // .then((uuid) => getUncompressedData(uuid))
+  // .then(() => getRawData('646041e3fdc5b4de5892b274'))
+  // .then((a) => console.log(a))
 
 async function connect() {
   const app = new Realm.App({ id: 'data-rsxwi' })
@@ -23,35 +24,35 @@ async function connect() {
 }
 
 //Returns the UUID of the newly created record
-export async function addRawToken(token) {
-  const result = await collection.insertOne({ token })
+export async function addRawData(data) {
+  const result = await collection.insertOne({ data })
 
   return result.insertedId.toString()
 }
 
 //Retrieve the compressed data
-export async function getRawToken(uuid) {
+export async function getRawData(uuid) {
   const result = await collection.findOne({
     _id: new Realm.BSON.ObjectId(uuid),
   })
 
-  return result.token
+  return result.data
 }
 
 //Returns the UUID of the newly created record
-export async function addUncompressedToken(obj) {
-  const compressedToken = LZString.compress(JSON.stringify(obj))
+export async function addUncompressedData(obj) {
+  const compressedData = LZString.compress(JSON.stringify(obj))
 
-  const rp = await addRawToken(compressedToken)
+  const rp = await addRawData(compressedData)
 
   return rp
 }
 
 //Retrieve and uncompress the data into a JSON string
-export async function getUncompressedToken(uuid) {
-  const compressed = await getRawToken(uuid)
+export async function getUncompressedData(uuid) {
+  const compressed = await getRawData(uuid)
 
-  const token = LZString.decompress(compressed)
+  const data = LZString.decompress(compressed)
 
-  return token
+  return data
 }

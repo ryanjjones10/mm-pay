@@ -1,29 +1,29 @@
+import { isEmpty } from 'lodash'
 import React, { useState } from 'react'
 import {
-  KeyboardAvoidingView,
-  View,
-  Text,
-  Pressable,
   Image,
+  KeyboardAvoidingView,
+  Pressable,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { isEmpty } from 'lodash'
 
 import Keypad from '@app/components/Keypad'
 import { Main } from '@app/components/layout/Main'
+import { addRawData } from '@app/constants/realmQuery'
 import { useAccounts } from '@app/services/AccountStore'
 import { button, colors } from '@app/styles/common'
 import { formatCurrency } from '@app/utils/currency'
+import QRCode from 'react-qr-code'
+import Card from './components/ui/Card'
+import Section from './components/ui/Section'
+import { LINEA_USDC } from './constants'
 import { inviteUser, useDispatch } from './services'
+import { useClaims } from './services/ClaimsStore'
 import { AccountType, ClaimStruct, ClaimTo } from './types'
 import { generateUUID, isNotEmpty } from './utils'
-import Section from './components/ui/Section'
-import Card from './components/ui/Card'
-import { useClaims } from './services/ClaimsStore'
-import { LINEA_USDC, testUUID } from './constants'
-import QRCode from 'react-qr-code'
-import { b64Encode } from './utils/claim'
 
 export const Send = () => {
   const { account } = useAccounts()
@@ -83,7 +83,9 @@ export const Send = () => {
         }),
       )
       setError(undefined)
-      setClaimToSend(claim)
+
+      console.log('claim', claim)
+      addRawData(claim).then((claimToSend) => setClaimToSend(claimToSend))
     })
   }
 
@@ -91,7 +93,7 @@ export const Send = () => {
     <Main>
       <Section>
         <View style={{ height: '100%' }}>
-          {claimToSend && isNotEmpty(claimToSend) ? (
+          {claimToSend && isNotEmpty(claimToSend) && (
             <View>
               <Card
                 style={{
@@ -106,7 +108,7 @@ export const Send = () => {
                   </Text>
                 </View>
                 <Text style={{ color: colors.text }}>
-                  exp://192.168.0.17:19000?token={b64Encode(testUUID)}
+                  exp://192.168.0.17:19000?token={claimToSend}
                 </Text>
                 <View
                   style={{
@@ -116,15 +118,13 @@ export const Send = () => {
                   }}
                 >
                   <QRCode
-                    value={`exp://192.168.0.17:19000?token=${b64Encode(
-                      testUUID,
-                    )}`}
+                    value={`exp://192.168.0.17:19000?token=${claimToSend}`}
                   />
                 </View>
               </Card>
             </View>
-          ) : null}
-          {!claimToSend ? (
+          )}
+          {!claimToSend && (
             <KeyboardAvoidingView>
               <View style={{ height: '100%', width: '100%' }}>
                 <View
@@ -236,8 +236,8 @@ export const Send = () => {
                 </Pressable>
               </View>
             </KeyboardAvoidingView>
-          ) : null}
-          {error ? (
+          )}
+          {error && (
             <View>
               <Text
                 style={{
@@ -250,7 +250,7 @@ export const Send = () => {
                 Error {error.message}
               </Text>
             </View>
-          ) : null}
+          )}
         </View>
       </Section>
     </Main>
