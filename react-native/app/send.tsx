@@ -82,6 +82,7 @@ export const Send = () => {
           to: ClaimTo.OTHER,
         }),
       )
+      setError(undefined)
       setClaimToSend(claim)
     })
   }
