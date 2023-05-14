@@ -24,7 +24,7 @@ export default function WalletValue({
       }}
     >
       {signerAddress ? (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
           {contractAddress ? (
             <Text
               style={{ fontSize: 20, fontWeight: '400', color: colors.text }}
@@ -36,7 +36,7 @@ export default function WalletValue({
         </View>
       ) : null}
       {contractAddress ? (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
           <Text style={{ fontSize: 20, fontWeight: '400', color: colors.text }}>
             Contract:
           </Text>
@@ -48,6 +48,7 @@ export default function WalletValue({
           color: colors.text,
           fontSize: 35,
           fontWeight: '600',
+          marginBottom: 10,
         }}
       >
         {formatCurrency(convertToFiat(value, 1).toNumber())}

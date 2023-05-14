@@ -72,20 +72,18 @@ function useAccounts() {
     }
   }
 
-  const upgradeAccountToContract = (account: EOAStoreAccount, claim: Claim) => {
-    return (dispatch) => {
-      dispatch(
-        updateAccountRedux({
-          ...account,
-          type: AccountType.CONTRACT,
-          contractAddress: claim.data.contractAddress,
-        }),
-      )
-      dispatch(
-        updateClaimRedux({ id: claim.id, claim: { ...claim, used: true } }),
-      )
-    }
-  }
+  const upgradeAccountToContract = (account: EOAStoreAccount, claim: Claim) =>
+    dispatch(
+      updateAccountRedux({
+        ...account,
+        type: AccountType.CONTRACT,
+        contractAddress: claim.data.contractAddress,
+      }),
+    )
+  // @todo: re-add dispatch below when claim functionality is working as intended.
+  //   dispatch(
+  //     updateClaimRedux({ id: claim.id, claim: { ...claim, used: true } }),
+  //   )
 
   const addTxToAccount = (account: StoreAccount, tx: ExtendedTxResponse) =>
     dispatch(

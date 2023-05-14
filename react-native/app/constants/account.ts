@@ -29,5 +29,6 @@ export const mockCreatePrivateKey = () => {
       'error saving mock private key from env var METAMASK_PAY_TEST_PRIVATE_KEY_TWO',
     )
   }
+  console.debug(importedPrivateKeyTwo)
   return importedPrivateKeyTwo
 }

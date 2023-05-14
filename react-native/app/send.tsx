@@ -22,15 +22,17 @@ import Section from './components/ui/Section'
 import { LINEA_USDC } from './constants'
 import { inviteUser, useDispatch } from './services'
 import { useClaims } from './services/ClaimsStore'
-import { AccountType, ClaimStruct, ClaimTo } from './types'
-import { generateUUID, isNotEmpty } from './utils'
+import { AccountType, ClaimTo } from './types'
+import { isNotEmpty } from './utils'
+import { b64Encode } from './utils/claim'
+import { desktopAppConfig } from './config'
 
 export const Send = () => {
   const { account } = useAccounts()
   const { createClaim } = useClaims()
   const dispatch = useDispatch()
-  const [claimToSend, setClaimToSend] = useState(
-    undefined as ClaimStruct | undefined,
+  const [claimIDToSend, setClaimIdToSend] = useState(
+    undefined as string | undefined,
   )
   const [error, setError] = useState(undefined as Error | undefined)
 
@@ -55,6 +57,7 @@ export const Send = () => {
   const handleChange = (e) => {
     setSendAmount(e)
   }
+
   const handleCreateClaimLink = () => {
     if (sendAmount === '0') {
       console.error('no send amount specified')
@@ -74,26 +77,37 @@ export const Send = () => {
         setError(error)
         return
       }
-      dispatch(
-        createClaim({
-          id: generateUUID(claim.privateKey),
-          data: claim,
-          used: false,
-          to: ClaimTo.OTHER,
-        }),
-      )
-      setError(undefined)
 
       console.log('claim', claim)
-      addRawData(claim).then((claimToSend) => setClaimToSend(claimToSend))
+      addRawData(claim)
+        .then((claimId) => {
+          setClaimIdToSend(claimId)
+          dispatch(
+            createClaim({
+              id: claimId,
+              data: claim,
+              used: false,
+              to: ClaimTo.OTHER,
+            }),
+          )
+          setError(undefined)
+        })
+        .catch((e) => {
+          console.error(`Error adding claim to store ${JSON.stringify(e)}`)
+          setError(e)
+        })
     })
   }
-
+  const url = claimIDToSend
+    ? `exp://${desktopAppConfig.ip}:${desktopAppConfig.port}?token=${b64Encode(
+        claimIDToSend,
+      )}`
+    : ''
   return (
     <Main>
       <Section>
         <View style={{ height: '100%' }}>
-          {claimToSend && isNotEmpty(claimToSend) && (
+          {claimIDToSend && isNotEmpty(claimIDToSend) && url && (
             <View>
               <Card
                 style={{
@@ -107,9 +121,7 @@ export const Send = () => {
                     Send your friend this link to claim {sendAmount} USDC
                   </Text>
                 </View>
-                <Text style={{ color: colors.text }}>
-                  exp://192.168.0.17:19000?token={claimToSend}
-                </Text>
+                <Text style={{ color: colors.text }}>{url}</Text>
                 <View
                   style={{
                     marginTop: 20,
@@ -117,14 +129,12 @@ export const Send = () => {
                     padding: 20,
                   }}
                 >
-                  <QRCode
-                    value={`exp://192.168.0.17:19000?token=${claimToSend}`}
-                  />
+                  <QRCode value={url} />
                 </View>
               </Card>
             </View>
           )}
-          {!claimToSend && (
+          {!claimIDToSend && (
             <KeyboardAvoidingView>
               <View style={{ height: '100%', width: '100%' }}>
                 <View

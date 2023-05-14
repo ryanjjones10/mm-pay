@@ -4,11 +4,11 @@ import * as Realm from 'realm-web'
 let collection
 
 connect()
-  // .then(() => collection.deleteMany({}))
-  // .then(() => addUncompressedData({ data: 'test testd test hello' }))
-  // .then((uuid) => getUncompressedData(uuid))
-  // .then(() => getRawData('646041e3fdc5b4de5892b274'))
-  // .then((a) => console.log(a))
+// .then(() => collection.deleteMany({}))
+// .then(() => addUncompressedData({ data: 'test testd test hello' }))
+// .then((uuid) => getUncompressedData(uuid))
+// .then(() => getRawData('646041e3fdc5b4de5892b274'))
+// .then((a) => console.log(a))
 
 async function connect() {
   const app = new Realm.App({ id: 'data-rsxwi' })
@@ -24,7 +24,7 @@ async function connect() {
 }
 
 //Returns the UUID of the newly created record
-export async function addRawData(data) {
+export async function addRawData(data): Promise<string> {
   const result = await collection.insertOne({ data })
 
   return result.insertedId.toString()

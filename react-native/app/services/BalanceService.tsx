@@ -12,7 +12,10 @@ export const getAccountUSDCBalance = async (
   provider: ProviderHandler,
   account: StoreAccount,
 ) => {
-  const balance = await provider.getTokenBalance(account.address, LINEA_USDC)
+  const balance = await provider.getTokenBalance(
+    'contractAddress' in account ? account.contractAddress : account.address,
+    LINEA_USDC,
+  )
   return balance
 }
 
@@ -20,7 +23,9 @@ export const getAccountNativeBalance = async (
   provider: ProviderHandler,
   account: StoreAccount,
 ) => {
-  const balance = await provider.getBalance(account.address)
+  const balance = await provider.getBalance(
+    'contractAddress' in account ? account.contractAddress : account.address,
+  )
   return balance
 }
 

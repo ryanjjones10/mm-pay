@@ -43,7 +43,7 @@ import {
 } from './types'
 import { importedPrivateKey } from './constants/account'
 
-import { IS_DEV } from './config'
+import { IS_DEV, shouldSUBMITALL } from './config'
 import { useClaims } from './services/ClaimsStore'
 import {
   ProviderHandler,
@@ -122,7 +122,7 @@ const Home = () => {
   const {
     account,
     addNewUserFromClaim,
-    addTxToAccount,
+    upgradeAccountToContract,
     updateAccount,
     resetAccount,
   } = useAccounts()
@@ -130,7 +130,7 @@ const Home = () => {
   const dispatch = useDispatch()
   const url = Linking.useURL()
   const [status, setStatus] = useState('')
-  const [error, setError] = useState(undefined as undefined | Error)
+  const [error] = useState(undefined as undefined | Error)
 
   const { url: initialUrl } = useInitialURL()
   console.debug('[Home]: initialUrl', initialUrl, '____', url)
@@ -213,37 +213,44 @@ const Home = () => {
       )
 
     if (!relevantClaim || isEmpty(relevantClaim)) return
-
+    console.debug('relevantClaim: ', relevantClaim)
+    if (!shouldSUBMITALL) {
+      return
+    }
+    console.debug('here')
+    dispatch(
+      upgradeAccountToContract(account as EOAStoreAccount, relevantClaim),
+    )
     // will be paid for by the "paymaster" - mocked for now - check `/app/constants/account.ts` to see the paymaster env var key
-    return executeUserOps(relevantClaim.data.userOps)
-      .then((d) => {
-        if (d) {
-          console.info(
-            `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
-          )
-          return d
-        } else {
-          setError(new Error('Undefined tx response.'))
-          return undefined
-        }
-      })
-      .catch((e) => {
-        console.error(
-          '[deploySmartAccountWallet]: error deploying smart contract using claim',
-          e,
-        )
-        setError(e)
-        return undefined
-      })
-      .then((d) => {
-        if (d) {
-          addTxToAccount(account, {
-            ...d,
-            txStatus: ITxStatus.PENDING,
-            txType: ITxType.DEPLOY_SMART_ACCOUNT,
-          })
-        }
-      })
+    // return executeUserOps(relevantClaim.data.userOps)
+    //   .then((d) => {
+    //     if (d) {
+    //       console.info(
+    //         `[deploySmartAccountWallet]: successfully deployed smart contract using claim id '${relevantClaim.id}'`,
+    //       )
+    //       return d
+    //     } else {
+    //       setError(new Error('Undefined tx response.'))
+    //       return undefined
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.error(
+    //       '[deploySmartAccountWallet]: error deploying smart contract using claim',
+    //       e,
+    //     )
+    //     setError(e)
+    //     return undefined
+    //   })
+    //   .then((d) => {
+    //     if (d) {
+    //       addTxToAccount(account, {
+    //         ...d,
+    //         txStatus: ITxStatus.PENDING,
+    //         txType: ITxType.DEPLOY_SMART_ACCOUNT,
+    //       })
+    //     }
+    //   })
   }
 
   const deploySmartAccountWallet = () => {
@@ -330,12 +337,12 @@ const Home = () => {
           </Avatar>
         </View>
       </View>
-      <View>
+      {/* <View>
         <Text style={{ color: colors.secondaryText }}>
           URL: {initialUrl} {initialUrl ?? initialUrl}
         </Text>
-      </View>
-      {claims.length !== 0 && (
+      </View> */}
+      {/* {claims.length !== 0 && (
         <View>
           <Text style={{ marginLeft: 7, color: colors.text }}>
             {claims.length} Claims Present
@@ -344,7 +351,7 @@ const Home = () => {
       )}
       {status && (
         <Text style={{ color: colors.secondaryText }}>status: {status}</Text>
-      )}
+      )} */}
       {isEmpty(account) ? (
         <View>
           <Section>
@@ -381,15 +388,7 @@ const Home = () => {
               </View>
             </Section>
           )}
-          {account.type === AccountType.EOA && claims.length !== 0 && (
-            <Section>
-              <View style={style.actionBar}>
-                <Button onClick={claimFunds}>
-                  <Text>Claim my funds</Text>
-                </Button>
-              </View>
-            </Section>
-          )}
+
           {error && (
             <Section>
               <View>
@@ -466,22 +465,31 @@ const Home = () => {
           </Section>
         </View>
       )}
-      <Section>
-        <Card style={{ backgroundColor: 'rgba(255, 255, 0, 0.15)' }}>
-          <View>
-            <View style={{ marginBottom: 10 }}>
-              <Text style={style.cardHeader}>Time to secure your funds!</Text>
-            </View>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
+
+      {account.type === AccountType.EOA &&
+        claims.filter(({ used }) => !used).length !== 0 && (
+          <Section>
+            <Card style={{ backgroundColor: 'rgba(255, 255, 0, 0.15)' }}>
               <View>
-                <Text style={{ color: '#0096FF', fontWeight: '600' }}>
-                  Secure your account
-                </Text>
+                <View style={{ marginBottom: 10 }}>
+                  <Text style={style.cardHeader}>
+                    Time to claim your funds!
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <View>
+                    <Text
+                      style={{ color: '#0096FF', fontWeight: '600' }}
+                      onClick={claimFunds}
+                    >
+                      Claim
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-        </Card>
-      </Section>
+            </Card>
+          </Section>
+        )}
       {!isEmpty(account) && (
         <View>
           <Section>

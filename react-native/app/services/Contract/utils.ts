@@ -5,7 +5,7 @@ import { keccak256 } from '@ethersproject/keccak256'
 import { Wallet } from '@ethersproject/wallet'
 import { ecsign } from 'ethereumjs-util'
 import { TransactionResponse } from '@ethersproject/providers'
-import { arrayify, hexlify, parseEther } from 'ethers/lib/utils'
+import { arrayify, hexlify, parseEther, parseUnits } from 'ethers/lib/utils'
 import { Buffer } from 'buffer'
 // import fs from 'fs'
 import {
@@ -73,7 +73,7 @@ export const sendUSDCToInvitationAddress = async (
   // 3. user 1 sends USDC to smart contract wallet 1’s contract address (using private key 0 - user 1’s private key with eth/usdc on it.)
   const transferData = encodeTransfer(
     Address(toAddress),
-    bigify(usdcAmtToSend), // i've only tested this with integers - this is non-decimals-adjusted (i.e 1 = 0.000001 USDC)
+    bigify(parseUnits(usdcAmtToSend, 6)), // i've only tested this with integers - this is non-decimals-adjusted (i.e 1 = 0.000001 USDC)
   )
   const txToSend = {
     value: '0x0',
