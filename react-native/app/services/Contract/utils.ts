@@ -156,6 +156,8 @@ export const createInvite = async (
       ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG),
     )
 
+    const newSigningKey = newWallet._signingKey().privateKey
+
     // 2. user 1 simulates deploy of smart contract wallet 1
     // using private key 1 as the owner with a threshold of 1
     // to get **create2** address (now called “smart contract
@@ -245,7 +247,7 @@ export const createInvite = async (
     // sign the hash with the new signer - since new signer will be the owner of the new CFAccount
     const sign = ecsign(
       Buffer.from(arrayify(delHash)),
-      Buffer.from(arrayify(newPrivateKey)),
+      Buffer.from(arrayify(newSigningKey)),
     )
     const hexsign = '0x' + signatureToHexString(sign)
 
@@ -342,7 +344,7 @@ export const createInvite = async (
 
     const sign2 = ecsign(
       Buffer.from(arrayify(delHash2)),
-      Buffer.from(arrayify(newPrivateKey)),
+      Buffer.from(arrayify(newSigningKey)),
     )
 
     console.debug('sign2', sign2)
@@ -455,9 +457,9 @@ async function fillUserOp(
   } else {
     userOp.nonce = hexlify((await sender.getNonce()).toNumber())
   }
-  userOp.callGasLimit = hexlify(300000)
-  userOp.verificationGasLimit = hexlify(4700000)
-  userOp.preVerificationGas = hexlify(3000000)
+  userOp.callGasLimit = hexlify(5000000)
+  userOp.verificationGasLimit = hexlify(5000000)
+  userOp.preVerificationGas = hexlify(5000000)
 
   const gasPrice = (await provider.getGasPrice()).mul(2)
 

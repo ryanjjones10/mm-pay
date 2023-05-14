@@ -1,6 +1,5 @@
 import '@ethersproject/shims'
 import { Wallet, verifyTypedData } from '@ethersproject/wallet'
-import ethers from 'ethers'
 import { SignTypedDataVersion, hashStruct } from './signUtils'
 import { Delegatable4337Account, EMPTY_ADDRESS } from '@app/constants'
 import { defaultAbiCoder } from '@ethersproject/abi'

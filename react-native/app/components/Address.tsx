@@ -31,7 +31,7 @@ const Address = ({
   const handleCopy = () => {
     copyToClipboard(address).then(() => setCopied(true))
   }
-  console.debug('[Address]: ', address)
+  //console.debug('[Address]: ', address)
   return (
     <View
       style={{

@@ -1,5 +1,5 @@
 export const appName = 'MetaMaskPay'
 export const storageName = `${appName}_Storage`
-export const sendTransactionsCheck = false
-export const shouldPrimeSmartAccount = false
-export const shouldPrimeEntrypoint = false
+export const sendTransactionsCheck = true
+export const shouldPrimeSmartAccount = true
+export const shouldPrimeEntrypoint = true
