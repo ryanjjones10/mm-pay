@@ -35,6 +35,7 @@ import { bigify, extractClaim } from './utils'
 import {
   AccountType,
   ClaimTo,
+  ContractStoreAccount,
   EOAStoreAccount,
   ITxStatus,
   ITxType,
@@ -196,7 +197,9 @@ const Home = () => {
 
   const claimFunds = () => {
     console.log('claiming')
-
+    if (account.type === AccountType.VIEW_ONLY) {
+      return
+    }
     const relevantClaim =
       claims.length !== 0 &&
       claims.find(
@@ -256,28 +259,26 @@ const Home = () => {
       // If there is a delegatable claim that can be used to deploy the smart contract, then use the claim.
 
       deployNew4337DelegatableSmartAccount(wallet).then((smartContractAcc) => {
-        if (!account) {
+        console.debug('smartContractAcc', smartContractAcc)
+        if (!smartContractAcc) {
           console.error(`[deploySmartAccountWallet]: failed to deploy.`)
         }
-        dispatch(
-          updateAccount({
-            ...account,
-            pendingContractAddress: smartContractAcc.address,
-            type: AccountType.EOA,
-            transactions: {
-              ...account.transactions,
-              [smartContractAcc.deployTransaction.hash]: {
-                ...account.transactions[
-                  smartContractAcc.deployTransaction.hash
-                ],
-                ...smartContractAcc.deployTransaction,
-                data: '', // remove this to not bloat stored state with contract deployment data
-                txType: ITxType.DEPLOY_SMART_ACCOUNT,
-                txStatus: ITxStatus.PENDING,
-              },
+        const newAcc = {
+          ...account,
+          type: AccountType.EOA,
+          transactions: {
+            ...account.transactions,
+            [smartContractAcc.deployTransaction.hash]: {
+              ...account.transactions[smartContractAcc.deployTransaction.hash],
+              ...smartContractAcc.deployTransaction,
+              data: '', // remove this to not bloat stored state with contract deployment data
+              txType: ITxType.DEPLOY_SMART_ACCOUNT,
+              txStatus: ITxStatus.PENDING,
             },
-          }),
-        )
+          },
+        }
+        console.debug(newAcc)
+        dispatch(updateAccount(newAcc as ContractStoreAccount))
       })
     } else {
       console.error(

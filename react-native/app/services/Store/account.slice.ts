@@ -150,14 +150,14 @@ export function* fetchBalances() {
 }
 
 export function* pendingTxPolling() {
-  console.debug(`[pendingTxPolling]: started.`)
+  //console.debug(`[pendingTxPolling]: started.`)
 
   const pendingTransactions: ExtendedTxResponse[] = yield select(
     selectTxsByStatus(ITxStatus.PENDING),
   )
-  console.debug(
-    `[pendingTxPolling]: started.${JSON.stringify(pendingTransactions)}`,
-  )
+  //   console.debug(
+  //     `[pendingTxPolling]: started.${JSON.stringify(pendingTransactions)}`,
+  //   )
   const account: StoreAccount = yield select(getAccount)
   if (account.type === AccountType.VIEW_ONLY) return
   const network = LINEA_NETWORK_CONFIG
@@ -165,7 +165,7 @@ export function* pendingTxPolling() {
   for (const pendingTx of pendingTransactions) {
     // If network is not found in the pendingTransactionObject, we cannot continue.
     if (!network) continue
-    console.debug(`[pendingTxPolling]: started rotation`)
+    // console.debug(`[pendingTxPolling]: started rotation`)
     const provider = new ProviderHandler(network)
 
     // Special notation for calling class functions that reference `this`
@@ -188,7 +188,7 @@ export function* pendingTxPolling() {
       )
       // If transaction count > pendingTx nonce, then the nonce has been used already
       // (i.e - tx may have been overwritten somewhere other than in-app)
-      if (transactionCount >= pendingTx.nonce) {
+      if (transactionCount > pendingTx.nonce) {
         yield put(
           removeAccountTx({
             txHash: pendingTx.hash,
@@ -215,8 +215,8 @@ export function* pendingTxPolling() {
     const isNowContractAccount =
       isDeploySmartAccount && account.type === AccountType.EOA
 
-    const deriveContractAddress = (isNowContractAccount, pendingTx) =>
-      isNowContractAccount ? pendingTx.contractAddress : undefined
+    const deriveContractAddress = (isNowContractAccount) =>
+      isNowContractAccount ? txResponse.contractAddress : undefined
 
     const deriveNewPendingContractAddr = (
       account: EOAStoreAccount | ContractStoreAccount,
@@ -238,7 +238,7 @@ export function* pendingTxPolling() {
     const newAccountData = {
       ...account,
       type: newAccountType,
-      contractAddress: deriveContractAddress(isNowContractAccount, pendingTx),
+      contractAddress: deriveContractAddress(isNowContractAccount),
       pendingContractAddress: deriveNewPendingContractAddr(
         account,
         newAccountType,
@@ -255,6 +255,7 @@ export function* pendingTxPolling() {
         return acc
       }, {}),
     }
+    console.debug(newAccountData, account)
     yield put(updateAccount(newAccountData))
   }
 }

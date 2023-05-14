@@ -7,7 +7,7 @@ import { ecsign } from 'ethereumjs-util'
 import { TransactionResponse } from '@ethersproject/providers'
 import { arrayify, hexlify, parseEther } from 'ethers/lib/utils'
 import { Buffer } from 'buffer'
-
+// import fs from 'fs'
 import {
   ClaimStruct,
   ContractStoreAccount,
@@ -377,11 +377,17 @@ export const createInvite = async (
     )
     console.debug('userOp2', userOp2)
 
-    return {
+    const z = {
       contractAddress: determinedNewSmartAccountAddress,
       privateKey: newPrivateKey,
       userOps: [userOp1, userOp2],
     }
+    // fs.writeFileSync(
+    //   `./storage/outputs_${new Date().toISOString()}.json`,
+    //   JSON.stringify(z, null, 2),
+    // )
+    // console.debug(z)
+    return z
   } catch (e) {
     throw new Error(`ERROR WITH SEND '${e}'`)
   }
@@ -476,10 +482,7 @@ export const executeUserOps = async (
   )
 
   //this isn't working right, it's not being paid for by the paymaster
-  const paymasterWallet = new Wallet(
-    importedPaymaster,
-    provider
-  )
+  const paymasterWallet = new Wallet(importedPaymaster, provider)
 
   // Execute the UserOperation which will deploy the new CFAccount and send 1 wei from the CFAccount to SmartAccount2
   return EntryPoint.handleOps(userOps, await paymasterWallet.getAddress(), {
