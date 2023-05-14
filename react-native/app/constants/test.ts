@@ -25,7 +25,7 @@ export const testClaim = b64Encode(
   }),
 )
 
-export const testContactName = 'tester'
+export const testContactName = 'Smart Account'
 
 export const viewOnlyTestAccountNew: ViewOnlyStoreAccount = {
   address: testAddr,

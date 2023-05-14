@@ -213,11 +213,8 @@ const Home = () => {
 
     if (!relevantClaim || isEmpty(relevantClaim)) return
 
-    return executeUserOps(
-      relevantClaim.data.privateKey,
-      relevantClaim.data.contractAddress,
-      relevantClaim.data.userOps,
-    )
+    // will be paid for by the "paymaster" - mocked for now - check `/app/constants/account.ts` to see the paymaster env var key
+    return executeUserOps(relevantClaim.data.userOps)
       .then((d) => {
         if (d) {
           console.info(

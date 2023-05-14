@@ -73,7 +73,7 @@ export const sendUSDCToInvitationAddress = async (
   // 3. user 1 sends USDC to smart contract wallet 1’s contract address (using private key 0 - user 1’s private key with eth/usdc on it.)
   const transferData = encodeTransfer(
     Address(toAddress),
-    bigify(usdcAmtToSend), // i've only tested this with integers. may need some working for decimals.
+    bigify(usdcAmtToSend), // i've only tested this with integers - this is non-decimals-adjusted (i.e 1 = 0.000001 USDC)
   )
   const txToSend = {
     value: '0x0',
@@ -167,7 +167,7 @@ export const createInvite = async (
     const completeBytecode = generateSmartAccountByteCode(
       SmartAccountFactory.bytecode,
       newWallet,
-      newWallet.address,
+      DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
     )
     // @todo: what is the [123] for?
     const salt = keccak256(defaultAbiCoder.encode(['uint256'], [123]))
@@ -471,20 +471,17 @@ async function fillUserOp(
 }
 
 export const executeUserOps = async (
-  newUserPrivateKey: string,
-  determinedNewSmartAccount: string,
   userOps: UserOpStruct[],
 ): Promise<TransactionResponse | undefined> => {
   const EntryPointFactory = new EntryPoint__factory()
   new ProviderHandler(LINEA_NETWORK_CONFIG, true)
   const provider = ProviderHandler.fetchProvider(LINEA_NETWORK_CONFIG)
-  const newUserWallet = new Wallet(newUserPrivateKey, provider)
-  const EntryPoint = EntryPointFactory.connect(newUserWallet).attach(
-    DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
-  )
-
   //this isn't working right, it's not being paid for by the paymaster
   const paymasterWallet = new Wallet(importedPaymaster, provider)
+
+  const EntryPoint = EntryPointFactory.connect(paymasterWallet).attach(
+    DelegatableContractsMap[DelegatableContractTypes.Entrypoint],
+  )
 
   // Execute the UserOperation which will deploy the new CFAccount and send 1 wei from the CFAccount to SmartAccount2
   return EntryPoint.handleOps(userOps, await paymasterWallet.getAddress(), {
